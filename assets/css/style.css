@@ -1,0 +1,83 @@
+@import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Playfair+Display:wght@500;600;700&display=swap');
+:root {
+    --sienna: #7A3E2E;
+    --terracotta: #B96F50;
+    --sand: #E7D8C7;
+    --ivory: #FAF3E9;
+    --charcoal: #2E2A27;
+    --sage: #5C7A5A;
+    --amber: #D4A24C;
+    --white: #FFFFFF;
+    --muted: #83766D;
+    --border: #E9DED2;
+    --soft-sienna: #F1E2D9;
+}
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+body {
+    min-height: 100vh;
+    background: var(--ivory);
+    color: var(--charcoal);
+    font-family: 'DM Sans', sans-serif;
+}
+h1, h2, h3, h4 {
+    color: var(--charcoal);
+}
+.display-heading {
+    font-family: 'Playfair Display', serif;
+}
+.muted-text {
+    color: var(--muted);
+}
+.eyebrow {
+    color: var(--terracotta);
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+}
+.btn-primary-custom {
+    background: var(--sienna);
+    color: var(--white);
+    border: 1px solid var(--sienna);
+    border-radius: 8px;
+    padding: 12px 18px;
+    font-weight: 600;
+    transition: 0.2s ease;
+}
+.btn-primary-custom:hover {
+    background: var(--terracotta);
+    border-color: var(--terracotta);
+    color: var(--white);
+}
+.card-custom {
+    background: var(--white);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 24px;
+}
+.form-control,
+.form-select {
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    min-height: 46px;
+    color: var(--charcoal);
+    box-shadow: none !important;
+}
+.form-control:focus,
+.form-select:focus {
+    border-color: var(--terracotta);
+}
+a {
+    color: var(--sienna);
+}
+a:hover {
+    color: var(--terracotta);
+}
+::selection {
+    background: var(--sand);
+    color: var(--charcoal);
+}
