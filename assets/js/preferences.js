@@ -1,321 +1,199 @@
 
-/* ========================================
-   ELECTRA - PREFERENCES AND RESULTS
-   ======================================== */
-
-const PREFERENCE_STORAGE_KEY = "electraPreferences";
-
-/* Populate the three preference dropdowns */
-
-function populatePreferenceDropdowns() {
-    const selects = [
-        document.getElementById("preference1"),
-        document.getElementById("preference2"),
-        document.getElementById("preference3")
-    ];
-
-    selects.forEach((select) => {
-        if (!select) return;
-
-        electives.forEach((elective) => {
-            const option = document.createElement("option");
-
-            option.value = elective.id;
-            option.textContent = `${elective.code} — ${elective.name}`;
-
-            select.appendChild(option);
-        });
-    });
-}
-
-/* Keep duplicate choices out of the other dropdowns */
-
-function updatePreferenceOptions() {
-    const selects = [
-        document.getElementById("preference1"),
-        document.getElementById("preference2"),
-        document.getElementById("preference3")
-    ];
-
-    const selectedIds = selects
-        .filter(Boolean)
-        .map((select) => select.value)
-        .filter(Boolean);
-
-    selects.forEach((select) => {
-        if (!select) return;
-
-        Array.from(select.options).forEach((option) => {
-            if (!option.value) return;
-
-            const selectedElsewhere =
-                selectedIds.includes(option.value) &&
-                option.value !== select.value;
-
-            option.disabled = selectedElsewhere;
-        });
-    });
-}
-
-/* Update the progress bar and summary panel */
-
-function updatePreferenceSummary() {
-    const selects = [
-        document.getElementById("preference1"),
-        document.getElementById("preference2"),
-        document.getElementById("preference3")
-    ];
-
-    const summary = document.getElementById("preferenceSummary");
-    const progress = document.getElementById("preferenceProgress");
-    const progressText = document.getElementById("preferenceProgressText");
-
-    if (!summary || !progress || !progressText) return;
-
-    const selected = selects
-        .map((select, index) => ({
-            rank: index + 1,
-            id: select?.value || ""
-        }))
-        .filter((item) => item.id);
-
-    summary.innerHTML = "";
-
-    progress.style.width = `${(selected.length / 3) * 100}%`;
-    progressText.textContent =
-        `${selected.length} of 3 preferences selected`;
-
-    if (selected.length === 0) {
-        const empty = document.createElement("p");
-        empty.className = "summary-empty";
-        empty.textContent = "Your selections will appear here.";
-        summary.appendChild(empty);
-        return;
-    }
-
-    selected.forEach((item) => {
-        const elective = electives.find((e) => e.id === item.id);
-
-        if (!elective) return;
-
-        const row = document.createElement("div");
-        row.className = "summary-item";
-
-        const rank = document.createElement("span");
-        rank.className = "summary-rank";
-        rank.textContent = String(item.rank).padStart(2, "0");
-
-        const details = document.createElement("div");
-
-        const title = document.createElement("strong");
-        title.textContent = elective.name;
-
-        const code = document.createElement("small");
-        code.textContent = elective.code;
-
-        details.append(title, code);
-        row.append(rank, details);
-        summary.appendChild(row);
-    });
-}
-
-/* Restore previously saved choices when the page opens */
-
-function restoreSavedPreferences() {
-    const saved = getSavedPreferences();
-
-    if (!saved) return;
-
-    const selects = [
-        document.getElementById("preference1"),
-        document.getElementById("preference2"),
-        document.getElementById("preference3")
-    ];
-
-    saved.preferences.forEach((item, index) => {
-        if (selects[index]) {
-            selects[index].value = item.id;
-        }
-    });
-
-    updatePreferenceOptions();
-    updatePreferenceSummary();
-}
-
-/* Save the student's preferences */
-
-function handlePreferenceSubmit(event) {
-    event.preventDefault();
-
-    const validation = validatePreferences();
-
-    if (!validation.valid) {
-        showPreferenceMessage(validation.message, "error");
-        return;
-    }
-
-    const selectedIds = getSelectedPreferenceIds();
-
-    const preferences = selectedIds
-        .map((id, index) => ({
-            id,
-            rank: index + 1
-        }))
-        .filter((item) => item.id);
-
-    const savedSuccessfully = savePreferencesToBrowser(preferences);
-
-    if (!savedSuccessfully) {
-        showPreferenceMessage(
-            "Your choices could not be saved in this browser. Check your browser storage settings and try again.",
-            "error"
-        );
-        return;
-    }
-
-    showPreferenceMessage(
-        "Your preferences have been saved in this browser. This is a frontend demonstration, not an official submission.",
-        "success"
-    );
-
-    updatePreferenceOptions();
-    updatePreferenceSummary();
-}
-
-/* Clear current choices and saved demonstration data */
-
-function clearPreferences() {
-    const selects = [
-        document.getElementById("preference1"),
-        document.getElementById("preference2"),
-        document.getElementById("preference3")
-    ];
-
-    selects.forEach((select) => {
-        if (select) {
-            select.value = "";
-            select.classList.remove("is-invalid");
-        }
-    });
-
-    try {
-        localStorage.removeItem(PREFERENCE_STORAGE_KEY);
-    } catch (error) {
-        console.error("Could not clear saved preferences:", error);
-    }
-
-    clearPreferenceMessage();
-    updatePreferenceOptions();
-    updatePreferenceSummary();
-}
-
-/* Render saved preferences on the allocation results page */
-
-function renderAllocationResults() {
-    const resultsContainer = document.getElementById("savedPreferences");
-
-    if (!resultsContainer) return;
-
-    const noPreferences = document.getElementById("noPreferences");
-    const resultActions = document.getElementById("resultActions");
-
-    const statusHeading = document.getElementById("resultStatusHeading");
-    const statusDescription = document.getElementById("resultStatusDescription");
-    const statusBadge = document.getElementById("resultStatusBadge");
-
-    const saved = getSavedPreferences();
-
-    resultsContainer.innerHTML = "";
-
-    if (!saved || saved.preferences.length === 0) {
-        if (noPreferences) noPreferences.hidden = false;
-        if (resultActions) resultActions.hidden = true;
-
-        statusHeading.textContent = "No preferences submitted";
-        statusDescription.textContent =
-            "Choose and save your preferences to see them on this page.";
-
-        statusBadge.textContent = "NOT SUBMITTED";
-        statusBadge.className = "status-badge pending";
-
-        return;
-    }
-
-    if (noPreferences) noPreferences.hidden = true;
-    if (resultActions) resultActions.hidden = false;
-
-    statusHeading.textContent = "Allocation pending";
-    statusDescription.textContent =
-        "Your preferences are saved locally. Final allocation has not been run or published.";
-
-    statusBadge.textContent = "PENDING";
-    statusBadge.className = "status-badge pending";
-
-    saved.preferences
-        .slice()
-        .sort((a, b) => a.rank - b.rank)
-        .forEach((item) => {
-            const elective = electives.find((e) => e.id === item.id);
-
-            if (!elective) return;
-
-            const row = document.createElement("div");
-            row.className = "saved-preference-row";
-
-            const rank = document.createElement("span");
-            rank.className = "saved-preference-rank";
-            rank.textContent = String(item.rank).padStart(2, "0");
-
-            const details = document.createElement("div");
-            details.className = "saved-preference-info";
-
-            const title = document.createElement("h3");
-            title.textContent = elective.name;
-
-            const description = document.createElement("p");
-            description.textContent =
-                `${elective.code} · ${elective.category}`;
-
-            const label = document.createElement("span");
-            label.className = "preference-status-label";
-            label.textContent = "Awaiting allocation";
-
-            details.append(title, description, label);
-            row.append(rank, details);
-
-            resultsContainer.appendChild(row);
-        });
-}
-
-/* Initialise the appropriate page */
-
-document.addEventListener("DOMContentLoaded", () => {
+document.addEventListener("DOMContentLoaded", function () {
     const preferenceForm = document.getElementById("preferenceForm");
-    const resetButton = document.getElementById("resetPreferences");
 
-    if (preferenceForm) {
-        populatePreferenceDropdowns();
-        restoreSavedPreferences();
+    const preferenceSelects = [
+        document.getElementById("preference1"),
+        document.getElementById("preference2"),
+        document.getElementById("preference3")
+    ].filter(Boolean);
 
-        [
-            document.getElementById("preference1"),
-            document.getElementById("preference2"),
-            document.getElementById("preference3")
-        ].forEach((select) => {
-            if (!select) return;
+    function populatePreferenceOptions() {
+        const currentElectives = getAvailableElectives();
 
-            select.addEventListener("change", () => {
-                clearPreferenceMessage();
-                select.classList.remove("is-invalid");
-                updatePreferenceOptions();
-                updatePreferenceSummary();
+        preferenceSelects.forEach(function (select) {
+            const oldValue = select.value;
+
+            select.replaceChildren();
+
+            const placeholder = document.createElement("option");
+            placeholder.value = "";
+            placeholder.textContent = "Select an elective";
+            select.appendChild(placeholder);
+
+            currentElectives.forEach(function (item) {
+                const option = document.createElement("option");
+                option.value = String(item.id);
+                option.textContent = item.code + " — " + item.name;
+                select.appendChild(option);
+            });
+
+            if ([...select.options].some(option => option.value === oldValue)) {
+                select.value = oldValue;
+            }
+        });
+    }
+
+    function updatePreferenceSummary() {
+        const selectedIds = getSelectedPreferenceIds();
+        const chosenIds = selectedIds.filter(Boolean);
+        const currentElectives = getAvailableElectives();
+
+        const progress = document.getElementById("preferenceProgress");
+        const progressText = document.getElementById("preferenceProgressText");
+        const summary = document.getElementById("preferenceSummary");
+
+        if (progress) {
+            progress.style.width = (chosenIds.length / 3 * 100) + "%";
+            progress.setAttribute("aria-valuenow", chosenIds.length);
+        }
+
+        if (progressText) {
+            progressText.textContent = chosenIds.length + " of 3 preferences selected";
+        }
+
+        if (summary) {
+            summary.replaceChildren();
+
+            selectedIds.forEach(function (id, index) {
+                const elective = currentElectives.find(
+                    item => String(item.id) === String(id)
+                );
+
+                const line = document.createElement("p");
+                line.className = "mb-2";
+
+                line.textContent = id && elective
+                    ? (index + 1) + ". " + elective.code + " — " + elective.name
+                    : (index + 1) + ". Not selected";
+
+                summary.appendChild(line);
+            });
+        }
+
+        // Avoid allowing the same elective to be chosen twice.
+        preferenceSelects.forEach(function (select) {
+            const otherSelectedIds = selectedIds.filter(
+                (id, index) => id && preferenceSelects[index] !== select
+            );
+
+            [...select.options].forEach(function (option) {
+                if (!option.value) return;
+
+                option.disabled = otherSelectedIds.includes(option.value);
             });
         });
+    }
 
-        preferenceForm.addEventListener("submit", handlePreferenceSubmit);
+    function restorePreferences() {
+        const saved = getSavedPreferences();
+
+        if (!saved || !Array.isArray(saved.preferences)) return;
+
+        preferenceSelects.forEach(function (select, index) {
+            select.value = String(saved.preferences[index] || "");
+        });
+
+        updatePreferenceSummary();
+    }
+
+    function renderAllocationResults() {
+        const heading = document.getElementById("resultStatusHeading");
+        const description = document.getElementById("resultStatusDescription");
+        const badge = document.getElementById("resultStatusBadge");
+        const savedList = document.getElementById("savedPreferences");
+        const noPreferences = document.getElementById("noPreferences");
+
+        if (!savedList) return;
+
+        savedList.replaceChildren();
+
+        const saved = getSavedPreferences();
+        const currentElectives = getAvailableElectives();
+
+        if (!saved || !Array.isArray(saved.preferences) || saved.preferences.length === 0) {
+            if (heading) heading.textContent = "No preferences submitted";
+            if (description) {
+                description.textContent = "Submit your elective preferences to see them here.";
+            }
+            if (badge) badge.textContent = "Not submitted";
+            if (noPreferences) noPreferences.classList.remove("d-none");
+
+            return;
+        }
+
+        if (heading) heading.textContent = "Preferences submitted";
+        if (description) {
+            description.textContent =
+                "Your saved preferences are shown below. Final allocation is not yet available.";
+        }
+        if (badge) badge.textContent = saved.status || "Pending";
+        if (noPreferences) noPreferences.classList.add("d-none");
+
+        saved.preferences.forEach(function (id, index) {
+            const elective = currentElectives.find(
+                item => String(item.id) === String(id)
+            );
+
+            const row = document.createElement("li");
+            row.className = "list-group-item";
+
+            row.textContent = (index + 1) + ". " +
+                (elective
+                    ? elective.code + " — " + elective.name
+                    : "Elective no longer available");
+
+            savedList.appendChild(row);
+        });
+    }
+
+    preferenceSelects.forEach(function (select) {
+        select.addEventListener("change", function () {
+            clearPreferenceMessage();
+            updatePreferenceSummary();
+        });
+    });
+
+    if (preferenceForm) {
+        populatePreferenceOptions();
+        restorePreferences();
+        updatePreferenceSummary();
+
+        preferenceForm.addEventListener("submit", function (event) {
+            event.preventDefault();
+
+            const result = validatePreferences();
+
+            if (!result.valid) {
+                showPreferenceMessage(result.message, "danger");
+                return;
+            }
+
+            const selected = getSelectedPreferenceIds().filter(Boolean);
+
+            if (!savePreferencesToBrowser(selected)) {
+                showPreferenceMessage(
+                    "Could not save preferences. Check browser storage settings.",
+                    "danger"
+                );
+                return;
+            }
+
+            showPreferenceMessage(
+                "Preferences saved successfully. Your allocation status is pending.",
+                "success"
+            );
+        });
+
+        const resetButton = document.getElementById("resetPreferences");
 
         if (resetButton) {
-            resetButton.addEventListener("click", clearPreferences);
+            resetButton.addEventListener("click", function () {
+                preferenceForm.reset();
+                localStorage.removeItem("electraPreferences");
+                clearPreferenceMessage();
+                updatePreferenceSummary();
+            });
         }
     }
 

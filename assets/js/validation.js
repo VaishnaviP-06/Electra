@@ -1,8 +1,4 @@
 
-/* ========================================
-   ELECTRA - REUSABLE VALIDATION
-   ======================================== */
-
 function getSelectedPreferenceIds() {
     return [
         document.getElementById("preference1")?.value || "",
@@ -12,108 +8,77 @@ function getSelectedPreferenceIds() {
 }
 
 function validatePreferences() {
-    const selects = [
-        document.getElementById("preference1"),
-        document.getElementById("preference2"),
-        document.getElementById("preference3")
-    ];
+    const selected = getSelectedPreferenceIds();
+    const chosen = selected.filter(Boolean);
+    const available = getAvailableElectives().map(item => String(item.id));
 
-    const selectedIds = getSelectedPreferenceIds();
-    const filledIds = selectedIds.filter(Boolean);
-
-    selects.forEach((select) => {
-        if (select) {
-            select.classList.remove("is-invalid");
-        }
-    });
-
-    if (!selectedIds[0]) {
-        selects[0]?.classList.add("is-invalid");
-
+    if (!selected[0]) {
         return {
             valid: false,
-            message: "Please select your first preference before saving."
+            message: "Please select your first preference."
         };
     }
 
-    const uniqueIds = new Set(filledIds);
-
-    if (uniqueIds.size !== filledIds.length) {
-        const seen = new Set();
-
-        selectedIds.forEach((id, index) => {
-            if (!id) return;
-
-            if (seen.has(id)) {
-                selects[index]?.classList.add("is-invalid");
-            }
-
-            seen.add(id);
-        });
-
+    if (new Set(chosen).size !== chosen.length) {
         return {
             valid: false,
-            message: "Each preference must be a different elective. Please remove duplicate choices."
+            message: "Please choose a different elective for each preference."
+        };
+    }
+
+    if (chosen.some(id => !available.includes(String(id)))) {
+        return {
+            valid: false,
+            message: "One of your selected electives is no longer available. Please select again."
         };
     }
 
     return {
         valid: true,
-        message: ""
+        message: "Your preferences are valid."
     };
 }
 
-function showPreferenceMessage(message, type) {
-    const messageBox = document.getElementById("validationMessage");
+function showPreferenceMessage(message, type = "info") {
+    const box = document.getElementById("validationMessage");
 
-    if (!messageBox) return;
+    if (!box) return;
 
-    messageBox.textContent = message;
-    messageBox.className = `form-feedback show ${type}`;
+    box.textContent = message;
+    box.className = "alert alert-" + type;
 }
 
 function clearPreferenceMessage() {
-    const messageBox = document.getElementById("validationMessage");
+    const box = document.getElementById("validationMessage");
 
-    if (!messageBox) return;
+    if (!box) return;
 
-    messageBox.textContent = "";
-    messageBox.className = "form-feedback";
+    box.textContent = "";
+    box.className = "alert d-none";
 }
 
 function savePreferencesToBrowser(preferences) {
     try {
-        localStorage.setItem(
-            "electraPreferences",
-            JSON.stringify({
-                preferences: preferences,
-                submittedAt: new Date().toISOString(),
-                status: "Pending"
-            })
-        );
+        const record = {
+            preferences: preferences,
+            submittedAt: new Date().toISOString(),
+            status: "Pending"
+        };
 
+        localStorage.setItem("electraPreferences", JSON.stringify(record));
         return true;
     } catch (error) {
-        console.error("Could not save preferences:", error);
+        console.error("Unable to save preferences:", error);
         return false;
     }
 }
 
 function getSavedPreferences() {
     try {
-        const saved = localStorage.getItem("electraPreferences");
-
-        if (!saved) return null;
-
-        const parsed = JSON.parse(saved);
-
-        if (!parsed || !Array.isArray(parsed.preferences)) {
-            return null;
-        }
-
-        return parsed;
+        const stored = localStorage.getItem("electraPreferences");
+        return stored ? JSON.parse(stored) : null;
     } catch (error) {
-        console.error("Could not read saved preferences:", error);
+        console.error("Unable to read preferences:", error);
         return null;
     }
 }
