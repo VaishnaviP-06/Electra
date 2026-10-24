@@ -11,17 +11,17 @@
 <body>
     <nav class="navbar navbar-expand-lg navbar-light bg-light border-bottom">
         <div class="container">
-            <a class="navbar-brand fw-bold" href="dashboard.html">Electra <span class="admin-label">ADMIN</span></a>
+            <a class="navbar-brand fw-bold" href="dashboard.jsp">Electra <span class="admin-label">ADMIN</span></a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#adminNav">
                 <span class="navbar-toggler-icon"></span>
             </button>
             <div class="collapse navbar-collapse" id="adminNav">
                 <div class="navbar-nav ms-auto">
-                    <a class="nav-link" href="dashboard.html">Dashboard</a>
-                    <a class="nav-link" href="electives.html">Student View</a>
-                    <a class="nav-link" href="profile.html">Profile</a>
-                    <a class="nav-link active" href="admin.html">Admin Panel</a>
-                    <a class="nav-link" href="login.html" id="adminLogout">Logout</a>
+                    <a class="nav-link" href="dashboard.jsp">Dashboard</a>
+                    <a class="nav-link" href="electives.jsp">Student View</a>
+                    <a class="nav-link" href="profile.jsp">Profile</a>
+                    <a class="nav-link active" href="admin.jsp">Admin Panel</a>
+                    <a class="nav-link" href="login.jsp" id="adminLogout">Logout</a>
                 </div>
             </div>
         </div>

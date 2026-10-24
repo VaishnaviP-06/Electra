@@ -25,7 +25,7 @@ loginForm.addEventListener("submit", function (event) {
      */
     sessionStorage.setItem("electraDemoUser", userId);
     sessionStorage.setItem("electraDemoRole", role);
-    window.location.href = "dashboard.html";
+    window.location.href = "dashboard.jsp";
 });
 document.getElementById("forgotLink").addEventListener("click", function (event) {
     event.preventDefault();

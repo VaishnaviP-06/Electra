@@ -11,18 +11,18 @@
 <body>
     <nav class="navbar navbar-expand-lg navbar-light bg-light border-bottom">
         <div class="container">
-            <a class="navbar-brand fw-bold" href="dashboard.html">Electra</a>
+            <a class="navbar-brand fw-bold" href="dashboard.jsp">Electra</a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#mainNav">
                 <span class="navbar-toggler-icon"></span>
             </button>
             <div class="collapse navbar-collapse" id="mainNav">
                 <div class="navbar-nav ms-auto">
-                    <a class="nav-link" href="dashboard.html">Dashboard</a>
-                    <a class="nav-link" href="electives.html">Electives</a>
-                    <a class="nav-link" href="preferences.html">Preferences</a>
-                    <a class="nav-link" href="allocation-results.html">Results</a>
-                    <a class="nav-link active" href="profile.html">My Profile</a>
-                    <a class="nav-link" href="admin.html">Admin</a>
+                    <a class="nav-link" href="dashboard.jsp">Dashboard</a>
+                    <a class="nav-link" href="electives.jsp">Electives</a>
+                    <a class="nav-link" href="preferences.jsp">Preferences</a>
+                    <a class="nav-link" href="allocation-results.jsp">Results</a>
+                    <a class="nav-link active" href="profile.jsp">My Profile</a>
+                    <a class="nav-link" href="admin.jsp">Admin</a>
                 </div>
             </div>
         </div>

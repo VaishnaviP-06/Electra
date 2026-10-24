@@ -1,7 +1,7 @@
 const userId = sessionStorage.getItem("electraDemoUser");
 const role = sessionStorage.getItem("electraDemoRole");
 if (!userId || !role) {
-    window.location.replace("login.html");
+    window.location.replace("login.jsp");
 } else {
     initializeDashboard();
 }
@@ -69,5 +69,5 @@ function initializeDashboard() {
 document.getElementById("logoutButton").addEventListener("click", function () {
     sessionStorage.removeItem("electraDemoUser");
     sessionStorage.removeItem("electraDemoRole");
-    window.location.replace("login.html");
+    window.location.replace("login.jsp");
 });

@@ -4,10 +4,10 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Electra | Department Portal</title>
-    <meta http-equiv="refresh" content="0; url=login.html">
+    <meta http-equiv="refresh" content="0; url=login.jsp">
 </head>
 <body>
     <p>Opening Electra...</p>
-    <a href="login.html">Continue to login</a>
+    <a href="login.jsp">Continue to login</a>
 </body>
 </html>

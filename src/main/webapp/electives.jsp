@@ -15,7 +15,7 @@
 
     <nav class="navbar navbar-expand-lg electra-navbar">
         <div class="container">
-            <a class="navbar-brand electra-brand" href="dashboard.html">
+            <a class="navbar-brand electra-brand" href="dashboard.jsp">
                 <span class="brand-symbol">E.</span> Electra
             </a>
 
@@ -29,19 +29,19 @@
             <div class="collapse navbar-collapse" id="mainNavbar">
                 <ul class="navbar-nav ms-auto align-items-lg-center gap-lg-3">
                     <li class="nav-item">
-                        <a class="nav-link" href="dashboard.html">Dashboard</a>
+                        <a class="nav-link" href="dashboard.jsp">Dashboard</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link active" href="electives.html">Electives</a>
+                        <a class="nav-link active" href="electives.jsp">Electives</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="preferences.html">My Preferences</a>
+                        <a class="nav-link" href="preferences.jsp">My Preferences</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="allocation-results.html">Results</a>
+                        <a class="nav-link" href="allocation-results.jsp">Results</a>
                     </li>
                     <li class="nav-item">
-                        <a class="btn btn-electra" href="profile.html">My Profile</a>
+                        <a class="btn btn-electra" href="profile.jsp">My Profile</a>
                     </li>
                 </ul>
             </div>
@@ -135,7 +135,7 @@
                 <p>Explore your options before ranking your preferences.</p>
             </div>
 
-            <a href="preferences.html" class="btn btn-light banner-button">
+            <a href="preferences.jsp" class="btn btn-light banner-button">
                 View Preferences <span aria-hidden="true">→</span>
             </a>
         </section>

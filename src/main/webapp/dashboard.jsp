@@ -11,7 +11,7 @@
 <body>
 <div class="app-layout">
     <aside class="sidebar">
-        <a href="dashboard.html" class="sidebar-brand">
+        <a href="dashboard.jsp" class="sidebar-brand">
             <span class="sidebar-logo">E</span>
             <span>
                 <strong>Electra</strong>
@@ -20,7 +20,7 @@
         </a>
         <div class="sidebar-label">WORKSPACE</div>
         <nav class="sidebar-nav">
-            <a href="dashboard.html" class="nav-link active">
+            <a href="dashboard.jsp" class="nav-link active">
                 <span class="nav-icon">&#9632;</span> Dashboard
             </a>
             <a href="#electives" class="nav-link" id="electivesLink">

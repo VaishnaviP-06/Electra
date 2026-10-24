@@ -15,7 +15,7 @@
 
     <nav class="navbar navbar-expand-lg electra-navbar">
         <div class="container">
-            <a class="navbar-brand electra-brand" href="dashboard.html">
+            <a class="navbar-brand electra-brand" href="dashboard.jsp">
                 <span class="brand-symbol">E.</span> Electra
             </a>
 
@@ -29,16 +29,16 @@
             <div class="collapse navbar-collapse" id="mainNavbar">
                 <ul class="navbar-nav ms-auto align-items-lg-center gap-lg-3">
                     <li class="nav-item">
-                        <a class="nav-link" href="dashboard.html">Dashboard</a>
+                        <a class="nav-link" href="dashboard.jsp">Dashboard</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link active" href="electives.html">Electives</a>
+                        <a class="nav-link active" href="electives.jsp">Electives</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="preferences.html">My Preferences</a>
+                        <a class="nav-link" href="preferences.jsp">My Preferences</a>
                     </li>
                     <li class="nav-item">
-                        <a class="btn btn-electra" href="profile.html">My Profile</a>
+                        <a class="btn btn-electra" href="profile.jsp">My Profile</a>
                     </li>
                 </ul>
             </div>
@@ -47,7 +47,7 @@
 
     <main class="container detail-container">
 
-        <a href="electives.html" class="back-link">
+        <a href="electives.jsp" class="back-link">
             <span aria-hidden="true">←</span> Back to all electives
         </a>
 
