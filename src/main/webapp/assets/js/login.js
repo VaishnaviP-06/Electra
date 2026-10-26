@@ -9,7 +9,10 @@ document.addEventListener('DOMContentLoaded', function () {
     const forgotLink = document.getElementById('forgotLink');
     const forgotModal = document.getElementById('forgotModal');
     const closeForgotModal = document.getElementById('closeForgotModal');
+    const userIdError = document.getElementById('userIdError');
+    const passwordError = document.getElementById('passwordError');
     const STUDENT_EMAIL_DOMAIN = '@student.sfit.ac.in';
+    const ADMIN_EMAIL_DOMAIN = '@sfit.ac.in';
     /*
      * STUDENT / ADMIN ROLE SWITCHING
      */
@@ -61,72 +64,93 @@ document.addEventListener('DOMContentLoaded', function () {
         });
     }
     /*
-     * FORM VALIDATION
-     */
+    * FORM VALIDATION WITH INLINE ERRORS
+    */
     if (loginForm) {
         loginForm.addEventListener('submit', function (event) {
             const role = document.getElementById('role').value;
             const userIdInput = document.getElementById('userId');
-            const userId = userIdInput.value.trim();
+            const userId = userIdInput.value.trim().toLowerCase();
             const password = passwordInput.value;
-            // Check required fields.
-            if (!userId || !password.trim()) {
-                event.preventDefault();
-                showMessage(
-                    'Please enter your login ID and password.',
-                    'danger'
-                );
-                return;
-            }
-            // Password must contain exactly 6 characters.
-            if (password.length !== 6) {
-                event.preventDefault();
-                showMessage(
-                    'Password must be exactly 6 characters long.',
-                    'danger'
-                );
-                passwordInput.focus();
-                return;
-            }
-            // Student email domain validation.
-            if (role === 'student') {
-                const normalizedEmail = userId.toLowerCase();
-                if (
-                    !normalizedEmail.endsWith(STUDENT_EMAIL_DOMAIN) ||
-                    normalizedEmail.length === STUDENT_EMAIL_DOMAIN.length
-                ) {
-                    event.preventDefault();
-                    showMessage(
-                        'Students must log in using their official email ending in @student.sfit.ac.in.',
-                        'danger'
-                    );
-                    userIdInput.focus();
-                    return;
-                }
-                // Use the normalized email for submission.
-                userIdInput.value = normalizedEmail;
-            }
-            // Administrator email domain validation.
-            if (role === 'admin') {
-                const normalizedEmail = userId.toLowerCase();
-                if (
-                    !normalizedEmail.endsWith(ADMIN_EMAIL_DOMAIN) ||
-                    normalizedEmail.length === ADMIN_EMAIL_DOMAIN.length
-                ) {
-                    event.preventDefault();
-                    showMessage(
-                        'Administrators must log in using their official email ending in @sfit.ac.in.',
-                        'danger'
-                    );
-                    userIdInput.focus();
-                    return;
-                }
-                // Use the normalized email for submission.
-                userIdInput.value = normalizedEmail;
-            }
+            // Clear previous inline errors.
+            clearFieldErrors();
             clearMessage();
+            let hasError = false;
+            // Validate email / login ID.
+            if (!userId) {
+                setFieldError(userIdError, 'Please enter your email address.');
+                userIdInput.focus();
+                hasError = true;
+            } else if (role === 'student') {
+                if (
+                    !userId.endsWith(STUDENT_EMAIL_DOMAIN) ||
+                    userId.length === STUDENT_EMAIL_DOMAIN.length
+                ) {
+                    setFieldError(
+                        userIdError,
+                        'Enter a valid student email ending in @student.sfit.ac.in.'
+                    );
+                    userIdInput.focus();
+                    hasError = true;
+                }
+            } else if (role === 'admin') {
+                if (
+                    !userId.endsWith(ADMIN_EMAIL_DOMAIN) ||
+                    userId.length === ADMIN_EMAIL_DOMAIN.length
+                ) {
+                    setFieldError(
+                        userIdError,
+                        'Enter a valid administrator email ending in @sfit.ac.in.'
+                    );
+                    userIdInput.focus();
+                    hasError = true;
+                }
+            }
+            // Validate password.
+            if (!password.trim()) {
+                setFieldError(passwordError, 'Please enter your password.');
+                if (!hasError) {
+                    passwordInput.focus();
+                }
+                hasError = true;
+            } else if (password.length !== 6) {
+                setFieldError(
+                    passwordError,
+                    'Password must be exactly 6 characters long.'
+                );
+                if (!hasError) {
+                    passwordInput.focus();
+                }
+                hasError = true;
+            }
+            // Prevent submission if any validation fails.
+            if (hasError) {
+                event.preventDefault();
+                return;
+            }
+            // Submit the normalized email.
+            userIdInput.value = userId;
             // Valid submissions continue to the existing login servlet.
         });
+    }
+    /*
+    * INLINE ERROR HELPERS
+    */
+    function setFieldError(element, message) {
+        if (element) {
+            element.textContent = message;
+            element.style.display = 'block';
+        }
+    }
+    function clearFieldErrors() {
+        if (userIdError) {
+            userIdError.textContent = '';
+            userIdError.style.display = 'none';
+        }
+        if (passwordError) {
+            passwordError.textContent = '';
+            passwordError.style.display = 'none';
+        }
     }
     /*
      * FORGOT PASSWORD MODAL

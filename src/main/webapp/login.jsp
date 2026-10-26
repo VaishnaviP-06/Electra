@@ -118,7 +118,7 @@
                 </button>
             </div>
             <!-- LOGIN FORM -->
-            <form id="loginForm" action="login" method="post">
+            <form id="loginForm" action="login" method="post" novalidate>
                 <input
                     type="hidden"
                     id="role"
@@ -144,6 +144,11 @@
                             placeholder="Enter your student email ID"
                             autocomplete="username"
                             required>
+                        <div
+                            id="userIdError"
+                            class="field-error"
+                            aria-live="polite">
+                        </div>
                     </div>
                 </div>
                 <!-- PASSWORD -->
@@ -163,14 +168,19 @@
                             placeholder="Enter your password"
                             autocomplete="current-password"
                             required>
-                        <button
-                            type="button"
-                            id="togglePassword"
-                            class="toggle-password"
-                            aria-label="Show password">
-                            Show
-                        </button>
-                    </div>
+                            <button
+                                type="button"
+                                id="togglePassword"
+                                class="toggle-password"
+                                aria-label="Show password">
+                                Show
+                            </button>
+                            </div>
+                            <div
+                                id="passwordError"
+                                class="field-error"
+                                aria-live="polite">
+                            </div>
                 </div>
                 <!-- REMEMBER ME / FORGOT PASSWORD -->
                 <div class="login-options">

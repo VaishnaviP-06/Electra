@@ -663,3 +663,17 @@
     font-size: 13px;
     line-height: 1.5;
 }
+/* Inline validation errors */
+.electra-login-page .field-error {
+    display: none;
+    color: #b42318;
+    font-size: 12px;
+    line-height: 1.5;
+    margin-top: 5px;
+    margin-bottom: 2px;
+}
+/* Highlight invalid inputs */
+.electra-login-page input.field-invalid {
+    border-color: #b42318;
+    outline-color: #b42318;
+}
