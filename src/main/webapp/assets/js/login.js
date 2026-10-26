@@ -33,12 +33,12 @@ document.addEventListener('DOMContentLoaded', function () {
         // Update the user ID label.
         idLabel.innerHTML = isStudent
             ? 'Student Email ID <span>*</span>'
-            : 'Administrator ID <span>*</span>';
+            : 'Administrator Email ID <span>*</span>';
         // Update the input type and placeholder.
         userId.type = isStudent ? 'email' : 'text';
         userId.placeholder = isStudent
             ? 'Enter your student email ID'
-            : 'Enter your administrator ID';
+            : 'Enter your administrator email ID';
         // Show the domain hint only for students.
         if (emailHint) {
             emailHint.style.display = isStudent ? '' : 'none';

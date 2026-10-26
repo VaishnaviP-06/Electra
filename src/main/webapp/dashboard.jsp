@@ -23,27 +23,27 @@
             <a href="dashboard.jsp" class="nav-link active">
                 <span class="nav-icon">&#9632;</span> Dashboard
             </a>
-            <a href="#electives" class="nav-link" id="electivesLink">
+            <a href="electives.jsp" class="nav-link" id="electivesLink">
                 <span class="nav-icon">&#9776;</span> View Electives
             </a>
-            <a href="#preferences" class="nav-link" id="preferencesLink">
+            <a href="preferences.jsp" class="nav-link" id="preferencesLink">
                 <span class="nav-icon">&#8645;</span> My Preferences
             </a>
-            <a href="#allocation" class="nav-link" id="allocationLink">
+            <a href="allocation-results.jsp" class="nav-link" id="allocationLink">
                 <span class="nav-icon">&#10003;</span> My Allocation
             </a>
             <div id="adminNavigation" class="d-none">
                 <div class="sidebar-label">ADMINISTRATION</div>
-                <a href="#students" class="nav-link">
+                <a href="admin-students.jsp" class="nav-link">
                     <span class="nav-icon">&#9787;</span> Manage Students
                 </a>
-                <a href="#manage-electives" class="nav-link">
+                <a href="admin-electives.jsp" class="nav-link">
                     <span class="nav-icon">&#9776;</span> Manage Electives
                 </a>
-                <a href="#allocation-settings" class="nav-link">
+                <a href="admin-allocations.jsp" class="nav-link">
                     <span class="nav-icon">&#9881;</span> Allocation Settings
                 </a>
-                <a href="#reports" class="nav-link">
+                <a href="reports.jsp" class="nav-link">
                     <span class="nav-icon">&#9636;</span> Allocation Reports
                 </a>
             </div>
@@ -140,19 +140,19 @@
                 </div>
             </div>
             <div class="actions-grid" id="actionsGrid">
-                <a href="#electives" class="action-card">
+                <a href="electives.jsp" class="action-card">
                     <div class="action-icon icon-sand">&#9776;</div>
                     <h3>Explore Electives</h3>
                     <p>Review subjects, syllabi, faculty and seat availability.</p>
                     <span class="action-link">View subjects &#8594;</span>
                 </a>
-                <a href="#preferences" class="action-card">
+                <a href="preferences.jsp" class="action-card">
                     <div class="action-icon icon-terracotta">&#8645;</div>
                     <h3>Submit Preferences</h3>
                     <p>Rank your top three elective choices.</p>
                     <span class="action-link">Choose preferences &#8594;</span>
                 </a>
-                <a href="#allocation" class="action-card">
+                <a href="allocation-results.jsp" class="action-card">
                     <div class="action-icon icon-sage">&#10003;</div>
                     <h3>View Allocation</h3>
                     <p>Check your final assigned elective when results are released.</p>

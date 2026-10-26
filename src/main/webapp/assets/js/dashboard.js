@@ -39,19 +39,19 @@ function initializeDashboard() {
         document.getElementById("quickActionsDescription").textContent =
             "Manage the elective allocation process.";
         document.getElementById("actionsGrid").innerHTML = `
-            <a href="#manage-electives" class="action-card">
+            <a href="admin-electives.jsp" class="action-card">
                 <div class="action-icon icon-sand">&#9776;</div>
                 <h3>Manage Electives</h3>
                 <p>Add subjects, configure seat capacity and maintain syllabus details.</p>
                 <span class="action-link">Manage subjects &#8594;</span>
             </a>
-            <a href="#students" class="action-card">
+            <a href="admin-students.jsp" class="action-card">
                 <div class="action-icon icon-terracotta">&#9787;</div>
                 <h3>Manage Students</h3>
                 <p>Review student records and eligibility information.</p>
                 <span class="action-link">View students &#8594;</span>
             </a>
-            <a href="#reports" class="action-card">
+            <a href="admin-allocations.jsp" class="action-card">
                 <div class="action-icon icon-sage">&#9636;</div>
                 <h3>Allocation Reports</h3>
                 <p>Review allocation outcomes and prepare final reports.</p>
