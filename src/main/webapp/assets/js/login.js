@@ -78,6 +78,16 @@ document.addEventListener('DOMContentLoaded', function () {
                 );
                 return;
             }
+            // Password must contain exactly 6 characters.
+            if (password.length !== 6) {
+                event.preventDefault();
+                showMessage(
+                    'Password must be exactly 6 characters long.',
+                    'danger'
+                );
+                passwordInput.focus();
+                return;
+            }
             // Student email domain validation.
             if (role === 'student') {
                 const normalizedEmail = userId.toLowerCase();
@@ -93,7 +103,25 @@ document.addEventListener('DOMContentLoaded', function () {
                     userIdInput.focus();
                     return;
                 }
-                // Use the trimmed email for submission.
+                // Use the normalized email for submission.
+                userIdInput.value = normalizedEmail;
+            }
+            // Administrator email domain validation.
+            if (role === 'admin') {
+                const normalizedEmail = userId.toLowerCase();
+                if (
+                    !normalizedEmail.endsWith(ADMIN_EMAIL_DOMAIN) ||
+                    normalizedEmail.length === ADMIN_EMAIL_DOMAIN.length
+                ) {
+                    event.preventDefault();
+                    showMessage(
+                        'Administrators must log in using their official email ending in @sfit.ac.in.',
+                        'danger'
+                    );
+                    userIdInput.focus();
+                    return;
+                }
+                // Use the normalized email for submission.
                 userIdInput.value = normalizedEmail;
             }
             clearMessage();
