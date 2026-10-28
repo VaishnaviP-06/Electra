@@ -92,7 +92,8 @@ public class PreferenceSubmissionDAO {
 
         String sql = "UPDATE preference_submissions " +
                      "SET submission_status = 'SUBMITTED' " +
-                     "WHERE submission_id = ? AND submission_status = 'DRAFT'";
+                     "WHERE submission_id = ? AND submission_status = 'DRAFT'" +
+                     "AND submission_status = 'DRAFT'";
 
         try (Connection conn = DBConnection.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
