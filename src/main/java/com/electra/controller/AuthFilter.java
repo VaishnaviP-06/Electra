@@ -16,7 +16,7 @@ import java.util.Set;
 
 @WebFilter(urlPatterns = {
     "/dashboard.jsp",
-    "/profile.jsp",
+    "/profile",
     "/preferences.jsp",
     "/allocation-results.jsp",
     "/electives.jsp",
@@ -104,10 +104,8 @@ public class AuthFilter implements Filter {
             }
         }
 
-        // 5. Other protected student pages remain student-only,
-        // except the existing profile-page rule.
-        else if (!"STUDENT".equals(role)
-                && !"/profile.jsp".equals(path)) {
+        // 5. Other protected pages are student-only.
+        else if (!"STUDENT".equals(role)) {
 
             response.sendError(
                 HttpServletResponse.SC_FORBIDDEN,

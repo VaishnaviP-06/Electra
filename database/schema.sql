@@ -223,6 +223,25 @@ CREATE TABLE elective_form_reviews (
         REFERENCES users(user_id)
 ) ENGINE=InnoDB;
 
+
+-- Student profile details
+CREATE TABLE student_profile (
+    student_id BIGINT PRIMARY KEY,
+    full_name VARCHAR(100) NOT NULL,
+    email VARCHAR(150) NOT NULL,
+    roll_number VARCHAR(30) NOT NULL UNIQUE,
+    department ENUM('CMPN', 'INFT', 'EXTC', 'ECS') NOT NULL,
+    academic_year ENUM('Second Year', 'Third Year', 'Final Year') NOT NULL,
+    cgpa DECIMAL(4,2) NOT NULL,
+
+    CONSTRAINT chk_profile_cgpa
+        CHECK (cgpa >= 0 AND cgpa <= 10),
+
+    CONSTRAINT fk_profile_student
+        FOREIGN KEY (student_id)
+        REFERENCES students(student_id)
+) ENGINE=InnoDB;
+
 -- Useful indexes for common queries
 CREATE INDEX idx_forms_status
     ON allocation_forms(form_status);

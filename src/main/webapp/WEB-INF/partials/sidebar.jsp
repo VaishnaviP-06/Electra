@@ -90,7 +90,7 @@
             <a href="<%= ctx %>/allocation-results.jsp" class="nav-link<%= "allocation".equals(active) ? " active" : "" %>"<%= "allocation".equals(active) ? " aria-current=\"page\"" : "" %>>
                 <span class="nav-icon"><svg class="icon" aria-hidden="true" focusable="false"><use href="#i-check"/></svg></span><span class="nav-text">My Allocation</span>
             </a>
-            <a href="<%= ctx %>/profile.jsp" class="nav-link<%= "profile".equals(active) ? " active" : "" %>"<%= "profile".equals(active) ? " aria-current=\"page\"" : "" %>>
+            <a href="<%= ctx %>/profile" class="nav-link<%= "profile".equals(active) ? " active" : "" %>"<%= "profile".equals(active) ? " aria-current=\"page\"" : "" %>>
                 <span class="nav-icon"><svg class="icon" aria-hidden="true" focusable="false"><use href="#i-user"/></svg></span><span class="nav-text">My Profile</span>
             </a>
     </nav>
