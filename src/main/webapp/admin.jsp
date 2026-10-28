@@ -3,178 +3,257 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Admin Dashboard | Electra</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <title>Admin Panel | Electra</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
+          rel="stylesheet">
     <link rel="stylesheet" href="assets/css/style.css">
+    <link rel="stylesheet" href="assets/css/sidebar.css">
+    <link rel="stylesheet" href="assets/css/dashboard.css">
     <link rel="stylesheet" href="assets/css/admin.css">
+    <link rel="stylesheet" href="assets/css/app-polish.css">
 </head>
-<body>
-    <nav class="navbar navbar-expand-lg navbar-light bg-light border-bottom">
-        <div class="container">
-            <a class="navbar-brand fw-bold" href="dashboard.jsp">Electra <span class="admin-label">ADMIN</span></a>
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#adminNav">
-                <span class="navbar-toggler-icon"></span>
-            </button>
-            <div class="collapse navbar-collapse" id="adminNav">
-                <div class="navbar-nav ms-auto">
-                    <a class="nav-link" href="dashboard.jsp">Dashboard</a>
-                    <a class="nav-link" href="electives.jsp">Student View</a>
-                    <a class="nav-link" href="profile.jsp">Profile</a>
-                    <a class="nav-link active" href="admin.jsp">Admin Panel</a>
-                    <a class="nav-link" href="login.jsp" id="adminLogout">Logout</a>
-                </div>
-            </div>
-        </div>
-    </nav>
-
-    <main class="container py-5">
-        <div class="d-flex flex-wrap justify-content-between align-items-center gap-3 mb-4">
+<body data-user-id="${sessionScope.userId}"
+      data-role="${sessionScope.role}">
+<div class="app-layout">
+    <!-- SIDEBAR -->
+    <jsp:include page="/WEB-INF/partials/sidebar.jsp">
+        <jsp:param name="active" value="overview"/>
+    </jsp:include>
+    <!-- MAIN CONTENT -->
+    <main class="main-content">
+        <!-- TOPBAR -->
+        <header class="topbar">
             <div>
-                <p class="small text-uppercase fw-semibold mb-2">Administration</p>
-                <h1 class="fw-bold mb-1">Admin Dashboard</h1>
-                <p class="text-muted mb-0">Manage electives and review demo student records.</p>
+                <div class="topbar-label">Academic Workspace</div>
+                <div class="topbar-title">Admin Panel</div>
             </div>
-            <button type="button" class="btn btn-outline-secondary" id="resetDemoData">
-                Reset Demo Electives
-            </button>
-            <button type="button" class="btn btn-primary" id="exportElectivesXml">
-                Export Electives to XML
-            </button>
-        </div>
-
-        <div id="adminMessage" class="alert d-none" role="alert"></div>
-
-        <div class="row g-3 mb-5">
-            <div class="col-sm-6 col-lg-4">
-                <div class="admin-stat-card h-100">
-                    <p>Total Electives</p>
-                    <h2 id="totalElectives">0</h2>
+            <div class="topbar-right">
+                <span class="status-dot"></span>
+                <span class="academic-year">Academic Year 2026–27</span>
+            </div>
+        </header>
+        <section class="page-content">
+            <!-- WELCOME SECTION -->
+            <div class="welcome-section">
+                <div class="eyebrow">Administration</div>
+                <h1>Elective Management</h1>
+                <p>
+                    Manage departmental electives, maintain the elective
+                    catalogue, and review available seat capacity.
+                </p>
+            </div>
+            <!-- MESSAGE -->
+            <div id="adminMessage"
+                 class="alert d-none mt-4"
+                 role="alert"
+                 aria-live="polite">
+            </div>
+            <!-- ADMINISTRATIVE TOOLS -->
+            <section class="admin-toolbar mt-4 mb-4">
+                <div>
+                    <h2 class="section-title">Administrative Tools</h2>
+                    <p class="section-description">
+                        Maintain and export the elective catalogue.
+                    </p>
                 </div>
-            </div>
-            <div class="col-sm-6 col-lg-4">
-                <div class="admin-stat-card h-100">
-                    <p>Total Seats</p>
-                    <h2 id="totalSeats">0</h2>
+                <div class="admin-toolbar-actions">
+                    <button type="button"
+                            class="btn btn-outline-secondary"
+                            id="resetDemoData">
+                        Reset Demo Electives
+                    </button>
+                    <button type="button"
+                            class="btn btn-primary"
+                            id="exportElectivesXml">
+                        Export to XML
+                    </button>
                 </div>
+            </section>
+            <!-- OVERVIEW -->
+            <div class="section-heading">
+                <h2>Overview</h2>
+                <p>Summary of the current elective catalogue.</p>
             </div>
-            <div class="col-sm-6 col-lg-4">
-                <div class="admin-stat-card h-100">
-                    <p>Saved Student Profiles</p>
-                    <h2 id="totalStudents">0</h2>
+            <div class="stats-grid admin-stats-grid">
+                <!-- TOTAL ELECTIVES -->
+                <article class="stat-card">
+                    <div class="stat-top">
+                        <span>Total Electives</span>
+                        <span class="stat-icon icon-sand">
+                            <svg class="icon" aria-hidden="true">
+                                <use href="#i-book"/>
+                            </svg>
+                        </span>
+                    </div>
+                    <div class="stat-number" id="totalElectives">0</div>
+                    <div class="stat-caption">
+                        Electives in the catalogue
+                    </div>
+                </article>
+                <!-- TOTAL SEATS -->
+                <article class="stat-card">
+                    <div class="stat-top">
+                        <span>Total Seats</span>
+                        <span class="stat-icon icon-terracotta">
+                            <svg class="icon" aria-hidden="true">
+                                <use href="#i-users"/>
+                            </svg>
+                        </span>
+                    </div>
+                    <div class="stat-number" id="totalSeats">0</div>
+                    <div class="stat-caption">
+                        Combined seat capacity
+                    </div>
+                </article>
+            </div>
+            <!-- ADD ELECTIVE -->
+            <section class="admin-section">
+                <div class="section-heading section-heading-spaced">
+                    <h2>Add a New Elective</h2>
+                    <p>
+                        Enter the elective details and seat capacity.
+                    </p>
                 </div>
-            </div>
-        </div>
-
-        <section class="card border-0 shadow-sm mb-5">
-            <div class="card-body p-4">
-                <h3 class="h4 fw-bold mb-3">Add a New Elective</h3>
-
-                <form id="electiveForm">
-                    <div class="row g-3">
-                        <div class="col-md-4">
-                            <label for="electiveCode" class="form-label">Elective Code</label>
-                            <input type="text" id="electiveCode" class="form-control"
-                                   placeholder="e.g. EC501" required maxlength="15">
+                <div class="admin-panel-card">
+                    <form id="electiveForm">
+                        <div class="row g-4">
+                            <div class="col-md-6 col-xl-4">
+                                <label for="electiveCode" class="form-label">
+                                    Elective Code
+                                </label>
+                                <input type="text"
+                                       id="electiveCode"
+                                       class="form-control"
+                                       placeholder="e.g. EC501"
+                                       maxlength="15"
+                                       required>
+                            </div>
+                            <div class="col-md-6 col-xl-4">
+                                <label for="electiveName" class="form-label">
+                                    Elective Name
+                                </label>
+                                <input type="text"
+                                       id="electiveName"
+                                       class="form-control"
+                                       placeholder="e.g. Cloud Computing"
+                                       maxlength="100"
+                                       required>
+                            </div>
+                            <div class="col-md-6 col-xl-4">
+                                <label for="electiveCategory" class="form-label">
+                                    Category
+                                </label>
+                                <select id="electiveCategory"
+                                        class="form-select"
+                                        required>
+                                    <option value="">Select category</option>
+                                    <option value="Departmental">Departmental</option>
+                                    <option value="Open Elective">Open Elective</option>
+                                    <option value="Professional Elective">Professional Elective</option>
+                                </select>
+                            </div>
+                            <div class="col-md-6 col-xl-4">
+                                <label for="electiveSeats" class="form-label">
+                                    Available Seats
+                                </label>
+                                <input type="number"
+                                       id="electiveSeats"
+                                       class="form-control"
+                                       min="1"
+                                       max="500"
+                                       step="1"
+                                       value="30"
+                                       required>
+                            </div>
+                            <div class="col-12 col-xl-8">
+                                <label for="electiveDescription" class="form-label">
+                                    Short Description
+                                </label>
+                                <input type="text"
+                                       id="electiveDescription"
+                                       class="form-control"
+                                       placeholder="Briefly describe the elective"
+                                       maxlength="200">
+                            </div>
                         </div>
-
-                        <div class="col-md-4">
-                            <label for="electiveName" class="form-label">Elective Name</label>
-                            <input type="text" id="electiveName" class="form-control"
-                                   placeholder="e.g. Cloud Computing" required maxlength="100">
+                        <div class="admin-form-footer">
+                            <p class="form-hint mb-0">
+                                Verify the elective code and seat capacity
+                                before adding the elective.
+                            </p>
+                            <button type="submit" class="btn btn-primary">
+                                Add Elective
+                            </button>
                         </div>
-
-                        <div class="col-md-4">
-                            <label for="electiveCategory" class="form-label">Category</label>
-                            <select id="electiveCategory" class="form-select" required>
-                                <option value="">Select category</option>
-                                <option value="Departmental">Departmental</option>
-                                <option value="Open Elective">Open Elective</option>
-                                <option value="Professional Elective">Professional Elective</option>
-                            </select>
-                        </div>
-
-                        <div class="col-md-4">
-                            <label for="electiveSeats" class="form-label">Available Seats</label>
-                            <input type="number" id="electiveSeats" class="form-control"
-                                   min="1" max="500" step="1" value="30" required>
-                        </div>
-
-                        <div class="col-md-8">
-                            <label for="electiveDescription" class="form-label">Short Description</label>
-                            <input type="text" id="electiveDescription" class="form-control"
-                                   placeholder="Briefly describe the elective" maxlength="200">
+                    </form>
+                </div>
+            </section>
+            <!-- MANAGE ELECTIVES -->
+            <section class="admin-section">
+                <div class="section-heading section-heading-spaced">
+                    <h2>Manage Electives</h2>
+                    <p>
+                        Review elective details and remove entries
+                        from the demonstration catalogue.
+                    </p>
+                </div>
+                <div class="admin-panel-card">
+                    <div class="admin-table-heading">
+                        <div>
+                            <h3>Elective Catalogue</h3>
+                            <p>
+                                Review subject details and seat capacity.
+                            </p>
                         </div>
                     </div>
-
-                    <button type="submit" class="btn btn-primary mt-4">Add Elective</button>
-                </form>
-            </div>
-        </section>
-
-        <section class="card border-0 shadow-sm mb-5">
-            <div class="card-body p-4">
-                <div class="d-flex justify-content-between align-items-center flex-wrap gap-2 mb-3">
-                    <h3 class="h4 fw-bold mb-0">Manage Electives</h3>
-                    <span class="text-muted small">Remove an elective using its action button.</span>
+                    <div class="table-responsive admin-table-wrapper">
+                        <table class="table align-middle admin-table">
+                            <thead>
+                                <tr>
+                                    <th scope="col">Code</th>
+                                    <th scope="col">Elective Name</th>
+                                    <th scope="col">Category</th>
+                                    <th scope="col">Seats</th>
+                                    <th scope="col">Action</th>
+                                </tr>
+                            </thead>
+                            <tbody id="electiveTableBody">
+                                <tr>
+                                    <td colspan="5"
+                                        class="text-center text-muted py-4">
+                                        Loading electives...
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
                 </div>
-
-                <div class="table-responsive">
-                    <table class="table align-middle">
-                        <thead>
-                            <tr>
-                                <th>Code</th>
-                                <th>Elective Name</th>
-                                <th>Category</th>
-                                <th>Seats</th>
-                                <th>Action</th>
-                            </tr>
-                        </thead>
-                        <tbody id="electiveTableBody">
-                            <tr>
-                                <td colspan="5" class="text-center text-muted">Loading electives...</td>
-                            </tr>
-                        </tbody>
-                    </table>
+            </section>
+            <!-- DEMO DATA NOTICE -->
+            <section class="alert-banner admin-demo-notice mt-4">
+                <svg class="icon alert-symbol" aria-hidden="true">
+                    <use href="#i-info"/>
+                </svg>
+                <div>
+                    <strong>Demo Data Notice</strong>
+                    <p>
+                        Elective changes on this page are stored in this
+                        browser only. They are not confirmed updates to
+                        the college database.
+                    </p>
                 </div>
-            </div>
+            </section>
+            <!-- FOOTER -->
+            <footer class="page-footer">
+                <span>Electra</span>
+                · Departmental Elective Allocation System
+                <span class="footer-year">2026–27</span>
+            </footer>
         </section>
-
-        <section class="card border-0 shadow-sm">
-            <div class="card-body p-4">
-                <h3 class="h4 fw-bold mb-3">Saved Student Profile</h3>
-                <p class="text-muted small">
-                    This demo shows the profile saved in the current browser only.
-                    It does not represent all students in the college database.
-                </p>
-
-                <div class="table-responsive">
-                    <table class="table align-middle">
-                        <thead>
-                            <tr>
-                                <th>Name</th>
-                                <th>Roll Number</th>
-                                <th>Department</th>
-                                <th>Year</th>
-                                <th>CGPA</th>
-                            </tr>
-                        </thead>
-                        <tbody id="studentTableBody">
-                            <tr>
-                                <td colspan="5" class="text-center text-muted">No saved profile found.</td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-        </section>
-
-        <p class="small text-muted mt-4">
-            Demo notice: this page is not protected by server-side admin authentication.
-        </p>
     </main>
-
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="assets/js/electives.js"></script>
-    <script src="assets/js/admin.js"></script>
+</div>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script src="assets/js/electives.js"></script>
+<script src="assets/js/admin.js"></script>
 </body>
 </html>
