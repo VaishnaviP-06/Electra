@@ -42,6 +42,57 @@ public class ElectiveDAO {
         return electives;
     }
 
+    public List<Elective> findAllByFormId(long formId) throws SQLException {
+        String sql =
+            "SELECT elective_id, form_id, elective_code, elective_name, "
+            + "syllabus, faculty_name, total_seats, min_students, "
+            + "min_cgpa, is_active, enrolment_status "
+            + "FROM electives "
+            + "WHERE form_id = ? "
+            + "ORDER BY elective_code";
+
+        List<Elective> electives = new ArrayList<>();
+        try (Connection connection = DBConnection.getConnection();
+             PreparedStatement statement = connection.prepareStatement(sql)) {
+            statement.setLong(1, formId);
+            try (ResultSet rs = statement.executeQuery()) {
+                while (rs.next()) {
+                    electives.add(mapRow(rs));
+                }
+            }
+        }
+        return electives;
+    }
+
+    public List<Elective> findAll() throws SQLException {
+        String sql =
+            "SELECT elective_id, form_id, elective_code, elective_name, "
+            + "syllabus, faculty_name, total_seats, min_students, "
+            + "min_cgpa, is_active, enrolment_status "
+            + "FROM electives "
+            + "ORDER BY form_id, elective_code";
+
+        List<Elective> electives = new ArrayList<>();
+        try (Connection connection = DBConnection.getConnection();
+             PreparedStatement statement = connection.prepareStatement(sql);
+             ResultSet rs = statement.executeQuery()) {
+            while (rs.next()) {
+                electives.add(mapRow(rs));
+            }
+        }
+        return electives;
+    }
+
+    public boolean activate(long electiveId, long formId) throws SQLException {
+        String sql = "UPDATE electives SET is_active = TRUE WHERE elective_id = ? AND form_id = ?";
+        try (Connection conn = DBConnection.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+            stmt.setLong(1, electiveId);
+            stmt.setLong(2, formId);
+            return stmt.executeUpdate() > 0;
+        }
+    }
+
     public Elective findByIdAndFormId(
             long electiveId, long formId) throws SQLException {
 

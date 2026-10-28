@@ -56,38 +56,38 @@
 <% if (isAdmin) { %>
     <div class="sidebar-label">Administration</div>
     <nav class="sidebar-nav" aria-label="Administrator navigation">
-            <a href="<%= ctx %>/admin.jsp" class="nav-link<%= "overview".equals(active) ? " active" : "" %>"<%= "overview".equals(active) ? " aria-current=\"page\"" : "" %>>
+            <a href="<%= ctx %>/dashboard" class="nav-link<%= "overview".equals(active) ? " active" : "" %>"<%= "overview".equals(active) ? " aria-current=\"page\"" : "" %>>
                 <span class="nav-icon"><svg class="icon" aria-hidden="true" focusable="false"><use href="#i-dashboard"/></svg></span><span class="nav-text">Overview</span>
             </a>
-            <a href="<%= ctx %>/admin-students.jsp" class="nav-link<%= "students".equals(active) ? " active" : "" %>"<%= "students".equals(active) ? " aria-current=\"page\"" : "" %>>
+            <a href="<%= ctx %>/admin-students" class="nav-link<%= "students".equals(active) ? " active" : "" %>"<%= "students".equals(active) ? " aria-current=\"page\"" : "" %>>
                 <span class="nav-icon"><svg class="icon" aria-hidden="true" focusable="false"><use href="#i-users"/></svg></span><span class="nav-text">Manage Students</span>
             </a>
-            <a href="<%= ctx %>/admin-electives.jsp" class="nav-link<%= "manage-electives".equals(active) ? " active" : "" %>"<%= "manage-electives".equals(active) ? " aria-current=\"page\"" : "" %>>
+            <a href="<%= ctx %>/admin-electives" class="nav-link<%= "manage-electives".equals(active) ? " active" : "" %>"<%= "manage-electives".equals(active) ? " aria-current=\"page\"" : "" %>>
                 <span class="nav-icon"><svg class="icon" aria-hidden="true" focusable="false"><use href="#i-book"/></svg></span><span class="nav-text">Manage Electives</span>
             </a>
-            <a href="<%= ctx %>/admin-allocations.jsp" class="nav-link<%= "allocations".equals(active) ? " active" : "" %>"<%= "allocations".equals(active) ? " aria-current=\"page\"" : "" %>>
+            <a href="<%= ctx %>/admin-allocations" class="nav-link<%= "allocations".equals(active) ? " active" : "" %>"<%= "allocations".equals(active) ? " aria-current=\"page\"" : "" %>>
                 <span class="nav-icon"><svg class="icon" aria-hidden="true" focusable="false"><use href="#i-settings"/></svg></span><span class="nav-text">Allocation Settings</span>
             </a>
-            <a href="<%= ctx %>/reports.jsp" class="nav-link<%= "reports".equals(active) ? " active" : "" %>"<%= "reports".equals(active) ? " aria-current=\"page\"" : "" %>>
+            <a href="<%= ctx %>/reports" class="nav-link<%= "reports".equals(active) ? " active" : "" %>"<%= "reports".equals(active) ? " aria-current=\"page\"" : "" %>>
                 <span class="nav-icon"><svg class="icon" aria-hidden="true" focusable="false"><use href="#i-report"/></svg></span><span class="nav-text">Reports</span>
             </a>
-            <a href="<%= ctx %>/electives.jsp" class="nav-link<%= "electives".equals(active) ? " active" : "" %>"<%= "electives".equals(active) ? " aria-current=\"page\"" : "" %>>
+            <a href="<%= ctx %>/electives" class="nav-link<%= "electives".equals(active) ? " active" : "" %>"<%= "electives".equals(active) ? " aria-current=\"page\"" : "" %>>
                 <span class="nav-icon"><svg class="icon" aria-hidden="true" focusable="false"><use href="#i-rank"/></svg></span><span class="nav-text">Student View</span>
             </a>
     </nav>
 <% } else { %>
     <div class="sidebar-label">Workspace</div>
     <nav class="sidebar-nav" aria-label="Main navigation">
-            <a href="<%= ctx %>/dashboard.jsp" class="nav-link<%= "dashboard".equals(active) ? " active" : "" %>"<%= "dashboard".equals(active) ? " aria-current=\"page\"" : "" %>>
+            <a href="<%= ctx %>/dashboard" class="nav-link<%= "dashboard".equals(active) ? " active" : "" %>"<%= "dashboard".equals(active) ? " aria-current=\"page\"" : "" %>>
                 <span class="nav-icon"><svg class="icon" aria-hidden="true" focusable="false"><use href="#i-dashboard"/></svg></span><span class="nav-text">Dashboard</span>
             </a>
-            <a href="<%= ctx %>/electives.jsp" class="nav-link<%= "electives".equals(active) ? " active" : "" %>"<%= "electives".equals(active) ? " aria-current=\"page\"" : "" %>>
+            <a href="<%= ctx %>/electives" class="nav-link<%= "electives".equals(active) ? " active" : "" %>"<%= "electives".equals(active) ? " aria-current=\"page\"" : "" %>>
                 <span class="nav-icon"><svg class="icon" aria-hidden="true" focusable="false"><use href="#i-book"/></svg></span><span class="nav-text">View Electives</span>
             </a>
-            <a href="<%= ctx %>/preferences.jsp" class="nav-link<%= "preferences".equals(active) ? " active" : "" %>"<%= "preferences".equals(active) ? " aria-current=\"page\"" : "" %>>
+            <a href="<%= ctx %>/preferences" class="nav-link<%= "preferences".equals(active) ? " active" : "" %>"<%= "preferences".equals(active) ? " aria-current=\"page\"" : "" %>>
                 <span class="nav-icon"><svg class="icon" aria-hidden="true" focusable="false"><use href="#i-rank"/></svg></span><span class="nav-text">My Preferences</span>
             </a>
-            <a href="<%= ctx %>/allocation-results.jsp" class="nav-link<%= "allocation".equals(active) ? " active" : "" %>"<%= "allocation".equals(active) ? " aria-current=\"page\"" : "" %>>
+            <a href="<%= ctx %>/allocation-results" class="nav-link<%= "allocation".equals(active) ? " active" : "" %>"<%= "allocation".equals(active) ? " aria-current=\"page\"" : "" %>>
                 <span class="nav-icon"><svg class="icon" aria-hidden="true" focusable="false"><use href="#i-check"/></svg></span><span class="nav-text">My Allocation</span>
             </a>
             <a href="<%= ctx %>/profile" class="nav-link<%= "profile".equals(active) ? " active" : "" %>"<%= "profile".equals(active) ? " aria-current=\"page\"" : "" %>>

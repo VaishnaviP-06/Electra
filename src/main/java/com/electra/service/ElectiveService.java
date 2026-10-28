@@ -69,6 +69,20 @@ public class ElectiveService {
         return electiveDAO.update(elective);
     }
 
+    public List<Elective> getAllElectives(long formId) throws SQLException {
+        validateFormExists(formId);
+        return electiveDAO.findAllByFormId(formId);
+    }
+
+    public List<Elective> getAllElectives() throws SQLException {
+        return electiveDAO.findAll();
+    }
+
+    public boolean activateElective(long electiveId, long formId) throws SQLException {
+        getElective(electiveId, formId);
+        return electiveDAO.activate(electiveId, formId);
+    }
+
     public boolean deactivateElective(long electiveId, long formId)
             throws SQLException {
 

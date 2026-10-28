@@ -1,3 +1,18 @@
+<%@ page contentType="text/html;charset=UTF-8" language="java" %>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
+<%--
+  Allocation Results page — student view.
+  Requires controller: StudentAllocationServlet sets 'allocationViews',
+  'hasSubmissions', 'hasPublishedResults' request attributes.
+  If accessed directly (no attributes), redirect to servlet.
+--%>
+<%
+    if (request.getAttribute("allocationViews") == null) {
+        response.sendRedirect(request.getContextPath() + "/allocation-results");
+        return;
+    }
+%>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -9,109 +24,219 @@
     <link rel="stylesheet" href="assets/css/sidebar.css">
     <link rel="stylesheet" href="assets/css/forms.css">
     <link rel="stylesheet" href="assets/css/app-polish.css">
+    <style>
+        .results-grid { display: flex; flex-direction: column; gap: 1.25rem; }
+        .result-card {
+            background: var(--card-bg, #fff);
+            border: 1px solid var(--border-color, #e5e7eb);
+            border-radius: 12px;
+            padding: 1.5rem;
+        }
+        .result-card-header {
+            display: flex; align-items: center; justify-content: space-between;
+            margin-bottom: 1rem;
+        }
+        .result-card-header h3 { margin: 0; font-size: 1.05rem; font-weight: 600; }
+        .form-eyebrow {
+            font-size: 0.7rem; font-weight: 700; letter-spacing: 0.08em;
+            text-transform: uppercase; color: var(--muted, #6b7280); margin-bottom: 0.25rem;
+        }
+        .result-detail-grid {
+            display: grid; grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+            gap: 0.75rem; margin-top: 0.75rem;
+        }
+        .detail-item label {
+            display: block; font-size: 0.7rem; font-weight: 600; text-transform: uppercase;
+            letter-spacing: 0.06em; color: var(--muted, #6b7280); margin-bottom: 0.2rem;
+        }
+        .detail-item span { font-size: 0.9rem; font-weight: 500; }
+        .badge-allocated { background: #d1fae5; color: #065f46; }
+        .badge-not-allotted { background: #fee2e2; color: #991b1b; }
+        .badge-pending { background: #fef9c3; color: #854d0e; }
+        .badge-submitted { background: #dbeafe; color: #1e40af; }
+        .badge-draft { background: #f3f4f6; color: #374151; }
+        .badge-hidden { background: #f3f4f6; color: #374151; font-style: italic; }
+        .status-banner {
+            border-radius: 10px; padding: 1.25rem 1.5rem;
+            display: flex; align-items: center; gap: 1rem; margin-bottom: 1.5rem;
+        }
+        .status-banner.info { background: #eff6ff; border: 1px solid #bfdbfe; }
+        .status-banner.success { background: #f0fdf4; border: 1px solid #bbf7d0; }
+        .status-banner.warning { background: #fffbeb; border: 1px solid #fde68a; }
+        .status-banner .icon { font-size: 2rem; }
+        .status-banner h2 { margin: 0 0 0.2rem; font-size: 1.05rem; }
+        .status-banner p { margin: 0; font-size: 0.88rem; color: var(--muted, #6b7280); }
+        .empty-state { text-align: center; padding: 3rem 1rem; color: var(--muted, #6b7280); }
+        .empty-state .icon { font-size: 3rem; margin-bottom: 1rem; }
+        .reason-text { font-size: 0.8rem; color: var(--muted, #6b7280); margin-top: 0.25rem; font-style: italic; }
+    </style>
 </head>
 <body class="electra-form-page">
-    <div class="app-layout">
-        <jsp:include page="/WEB-INF/partials/sidebar.jsp">
-            <jsp:param name="active" value="allocation"/>
-        </jsp:include>
-        <main class="main-content">
-    <div class="container form-page-container">
-        <div class="page-intro">
-            <span class="eyebrow">ALLOCATION CENTRE</span>
-            <h1>Your results, <em>in one place.</em></h1>
-            <p>
-                Review your saved preferences and check your allocation status.
-                Final results will appear here after the administrator publishes them.
-            </p>
-        </div>
-        <section class="result-status-card">
-            <div class="status-icon" aria-hidden="true">◷</div>
-            <div class="status-content">
-                <span class="eyebrow">CURRENT STATUS</span>
-                <h2 id="resultStatusHeading">Allocation pending</h2>
-                <p id="resultStatusDescription">
-                    Your final allocation has not been published yet.
-                </p>
+<div class="app-layout">
+    <jsp:include page="/WEB-INF/partials/sidebar.jsp">
+        <jsp:param name="active" value="allocation"/>
+    </jsp:include>
+    <main class="main-content">
+        <div class="container form-page-container">
+
+            <div class="page-intro">
+                <span class="eyebrow">ALLOCATION CENTRE</span>
+                <h1>Your results, <em>in one place.</em></h1>
+                <p>Review your preference submissions and allocation status below.
+                   Elective details are only shown after the administrator publishes results.</p>
             </div>
-            <span id="resultStatusBadge" class="status-badge pending">PENDING</span>
-        </section>
-        <div class="results-grid">
-            <section class="form-card">
-                <div class="form-card-heading">
-                    <span class="eyebrow">YOUR SUBMISSION</span>
-                    <h2>Saved preferences</h2>
-                    <p>Your choices in their submitted priority order.</p>
+
+            <%-- Error message if any --%>
+            <c:if test="${not empty errorMessage}">
+                <div class="alert alert-danger mb-3" role="alert">
+                    <strong>Error:</strong> <c:out value="${errorMessage}"/>
                 </div>
-                <div id="savedPreferences" class="saved-preferences">
-                    <p class="summary-empty">Loading your saved preferences...</p>
-                </div>
-                <div id="noPreferences" class="no-preferences" hidden>
-                    <div class="empty-icon">⌕</div>
-                    <h3>No preferences saved yet</h3>
-                    <p>Explore the elective catalogue and submit your choices first.</p>
-                    <a href="preferences.jsp" class="btn btn-electra">
-                        Choose preferences →
-                    </a>
-                </div>
-                <div id="resultActions" class="form-actions">
-                    <a href="preferences.jsp" class="btn btn-outline-electra">
-                        Review preferences
-                    </a>
-                    <a href="electives.jsp" class="btn btn-electra">
-                        Browse electives
-                    </a>
-                </div>
-            </section>
-            <aside class="preference-sidebar">
-                <section class="side-info-card">
-                    <span class="eyebrow">ALLOCATION GUIDE</span>
-                    <h3>What happens next?</h3>
-                    <div class="timeline-step">
-                        <span class="timeline-dot complete">✓</span>
+            </c:if>
+
+            <%-- Overall status banner --%>
+            <c:choose>
+                <c:when test="${hasPublishedResults}">
+                    <div class="status-banner success">
+                        <span class="icon">🎓</span>
                         <div>
-                            <strong>Submit preferences</strong>
-                            <p>Save your ranked elective choices.</p>
+                            <h2>Results Available</h2>
+                            <p>At least one of your allocation results has been published. See details below.</p>
                         </div>
                     </div>
-                    <div class="timeline-step">
-                        <span class="timeline-dot">2</span>
+                </c:when>
+                <c:when test="${hasSubmissions}">
+                    <div class="status-banner info">
+                        <span class="icon">⏳</span>
                         <div>
-                            <strong>Allocation processing</strong>
-                            <p>The system checks eligibility, priority and seat availability.</p>
+                            <h2>Allocation Pending</h2>
+                            <p>Your preferences have been submitted. Results will appear here once published by the administrator.</p>
                         </div>
                     </div>
-                    <div class="timeline-step">
-                        <span class="timeline-dot">3</span>
+                </c:when>
+                <c:otherwise>
+                    <div class="status-banner warning">
+                        <span class="icon">📋</span>
                         <div>
-                            <strong>Results published</strong>
-                            <p>View your assigned elective after official publication.</p>
+                            <h2>No Submissions Yet</h2>
+                            <p>You haven't submitted preferences for any open form. Visit the Preferences page to get started.</p>
                         </div>
                     </div>
-                </section>
-                <section class="side-info-card">
-                    <span class="eyebrow">PLEASE NOTE</span>
-                    <h3>Demonstration mode</h3>
-                    <p>
-                        This page currently reads saved choices from this browser.
-                        Official results require the backend and database.
-                    </p>
-                </section>
-            </aside>
+                </c:otherwise>
+            </c:choose>
+
+            <%-- Results grid --%>
+            <c:choose>
+                <c:when test="${empty allocationViews}">
+                    <div class="empty-state">
+                        <div class="icon">📭</div>
+                        <p>No allocation records found. Submit your preferences from the
+                           <a href="${pageContext.request.contextPath}/preferences">Preferences</a> page.</p>
+                    </div>
+                </c:when>
+                <c:otherwise>
+                    <div class="results-grid">
+                        <c:forEach var="view" items="${allocationViews}">
+                            <div class="result-card">
+                                <div class="result-card-header">
+                                    <div>
+                                        <div class="form-eyebrow">Allocation Form</div>
+                                        <h3><c:out value="${view.formName}"/></h3>
+                                    </div>
+                                    <%-- Submission status badge --%>
+                                    <c:choose>
+                                        <c:when test="${view.submissionStatus == 'SUBMITTED'}">
+                                            <span class="badge badge-submitted">Submitted</span>
+                                        </c:when>
+                                        <c:when test="${view.submissionStatus == 'DRAFT'}">
+                                            <span class="badge badge-draft">Draft</span>
+                                        </c:when>
+                                        <c:otherwise>
+                                            <span class="badge badge-pending">Not Submitted</span>
+                                        </c:otherwise>
+                                    </c:choose>
+                                </div>
+
+                                <div class="result-detail-grid">
+                                    <%-- Submission timestamp --%>
+                                    <div class="detail-item">
+                                        <label>Submitted At</label>
+                                        <c:choose>
+                                            <c:when test="${view.submittedAt != null}">
+                                                <span><fmt:formatDate value="${view.submittedAt}" pattern="dd MMM yyyy, HH:mm"/></span>
+                                            </c:when>
+                                            <c:otherwise>
+                                                <span style="color:var(--muted,#6b7280)">—</span>
+                                            </c:otherwise>
+                                        </c:choose>
+                                    </div>
+
+                                    <%-- Allocation status --%>
+                                    <div class="detail-item">
+                                        <label>Allocation Status</label>
+                                        <c:choose>
+                                            <c:when test="${view.resultsPublished and view.allocationStatus == 'ALLOCATED'}">
+                                                <span class="badge badge-allocated">Allocated ✓</span>
+                                            </c:when>
+                                            <c:when test="${view.resultsPublished and view.allocationStatus == 'NOT_ALLOTTED'}">
+                                                <span class="badge badge-not-allotted">Not Allotted</span>
+                                            </c:when>
+                                            <c:when test="${view.resultsPublished and view.allocationStatus != null}">
+                                                <span class="badge badge-pending"><c:out value="${view.allocationStatus}"/></span>
+                                            </c:when>
+                                            <c:when test="${view.submissionStatus == 'SUBMITTED'}">
+                                                <span class="badge badge-pending">Awaiting Results</span>
+                                            </c:when>
+                                            <c:otherwise>
+                                                <span class="badge badge-hidden">—</span>
+                                            </c:otherwise>
+                                        </c:choose>
+                                    </div>
+
+                                    <%-- Elective details: only shown if results published --%>
+                                    <c:if test="${view.resultsPublished and view.allocationStatus == 'ALLOCATED'}">
+                                        <div class="detail-item">
+                                            <label>Elective</label>
+                                            <span><c:out value="${view.electiveName}"/></span>
+                                        </div>
+                                        <div class="detail-item">
+                                            <label>Code</label>
+                                            <span><c:out value="${view.electiveCode}"/></span>
+                                        </div>
+                                        <c:if test="${not empty view.facultyName}">
+                                            <div class="detail-item">
+                                                <label>Faculty</label>
+                                                <span><c:out value="${view.facultyName}"/></span>
+                                            </div>
+                                        </c:if>
+                                    </c:if>
+
+                                    <%-- Reason for NOT_ALLOTTED --%>
+                                    <c:if test="${view.resultsPublished and view.allocationStatus == 'NOT_ALLOTTED' and not empty view.allocationReason}">
+                                        <div class="detail-item" style="grid-column: 1 / -1;">
+                                            <label>Reason</label>
+                                            <p class="reason-text"><c:out value="${view.allocationReason}"/></p>
+                                        </div>
+                                    </c:if>
+                                </div>
+                            </div>
+                        </c:forEach>
+                    </div>
+                </c:otherwise>
+            </c:choose>
+
+            <%-- Action links --%>
+            <div class="mt-4 d-flex gap-3">
+                <a href="${pageContext.request.contextPath}/preferences" class="btn btn-outline-primary btn-sm">
+                    ← Back to Preferences
+                </a>
+                <a href="${pageContext.request.contextPath}/dashboard.jsp" class="btn btn-outline-secondary btn-sm">
+                    Dashboard
+                </a>
+            </div>
+
         </div>
-    </div>
-        </main>
-    </div>
-    <footer class="electra-footer">
-        <div class="container">
-            <span>Electra</span>
-            <p>The Right Choice. The Right Future.</p>
-            <small>Departmental Elective Allocation System</small>
-        </div>
-    </footer>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="assets/js/electives.js"></script>
-    <script src="assets/js/validation.js"></script>
-    <script src="assets/js/preferences.js"></script>
+    </main>
+</div>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>

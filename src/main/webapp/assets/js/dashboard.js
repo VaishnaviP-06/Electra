@@ -39,11 +39,11 @@ function initializeDashboard() {
         document.getElementById("quickActionsDescription").textContent =
             "Manage the elective allocation process.";
         document.getElementById("actionsGrid").innerHTML =
-            actionCard("admin-electives.jsp", "book", "sand", "Manage Electives",
+            actionCard("admin-electives", "book", "sand", "Manage Electives",
                 "Add subjects, configure seat capacity and maintain syllabus details.", "Manage subjects") +
-            actionCard("admin-students.jsp", "users", "terracotta", "Manage Students",
+            actionCard("admin-students", "users", "terracotta", "Manage Students",
                 "Review student records and eligibility information.", "View students") +
-            actionCard("admin-allocations.jsp", "report", "sage", "Allocation Reports",
+            actionCard("admin-allocations", "report", "sage", "Allocation Settings",
                 "Review allocation outcomes and prepare final reports.", "View reports");
     }
 }

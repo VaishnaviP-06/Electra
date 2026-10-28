@@ -1,4 +1,12 @@
 <%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%
+    if (request.getAttribute("reportSummary") == null) {
+        String query = request.getQueryString();
+        response.sendRedirect(request.getContextPath() + "/reports" + (query != null ? "?" + query : ""));
+        return;
+    }
+%>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -6,14 +14,13 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Allocation Reports | Electra</title>
 
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
-          rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="assets/css/style.css">
     <link rel="stylesheet" href="assets/css/sidebar.css">
     <link rel="stylesheet" href="assets/css/app-polish.css">
 
     <style>
-            .page-heading {
+        .page-heading {
             display: flex;
             justify-content: space-between;
             align-items: center;
@@ -60,6 +67,24 @@
             margin-bottom: 24px;
         }
 
+        .surface {
+            background: #fff;
+            border: 1px solid #eee4da;
+            border-radius: 14px;
+            padding: 24px;
+            margin-bottom: 24px;
+        }
+
+        .badge-status {
+            font-size: 0.8rem;
+            font-weight: 600;
+            padding: 4px 8px;
+            border-radius: 6px;
+        }
+        .badge-ok { background: #e8f5e9; color: #2e7d32; }
+        .badge-low { background: #ffebee; color: #c62828; }
+        .badge-pending { background: #fff8e1; color: #f57f17; }
+
         @media (max-width: 768px) {
             .page-heading {
                 align-items: flex-start;
@@ -88,7 +113,7 @@
         <header class="topbar">
             <div>
                 <div class="topbar-label">ELECTRA / ADMINISTRATION</div>
-                <div class="topbar-title">Allocation Reports</div>
+                <div class="topbar-title">Allocation Reports &amp; Export</div>
             </div>
 
             <span class="academic-year">Academic Year 2026–27</span>
@@ -102,67 +127,62 @@
                     <h1>Allocation Reports</h1>
                     <p>
                         Review preference submissions, seat utilisation,
-                        allocation status and elective enrolment.
+                        allocation outcomes and export reports in XML format.
                     </p>
                 </div>
 
-                <a class="btn btn-outline-secondary" href="admin.jsp">
+                <a class="btn btn-outline-secondary" href="${pageContext.request.contextPath}/dashboard">
                     ← Overview
                 </a>
             </div>
 
-            <!-- REPORT STATUS -->
-            <div class="report-note">
-                <strong>Reporting Information</strong>
-                <p class="mb-0 mt-2">
-                    Report figures depend on allocation and preference data.
-                    Live report generation must be connected to the reporting
-                    servlet and database.
-                </p>
-            </div>
+            <c:if test="${not empty error}">
+                <div class="alert alert-danger" role="alert">
+                    <c:out value="${error}"/>
+                </div>
+            </c:if>
 
             <!-- SUMMARY CARDS -->
             <div class="metric-grid">
-
                 <div class="metric">
                     <span>Preference Submissions</span>
-                    <strong id="reportPreferenceCount">—</strong>
+                    <strong id="reportPreferenceCount"><c:out value="${reportSummary.totalSubmissions}"/></strong>
                 </div>
 
                 <div class="metric">
                     <span>Seats Allocated</span>
-                    <strong id="reportSeatsAllocated">—</strong>
+                    <strong id="reportSeatsAllocated"><c:out value="${reportSummary.totalSeatsAllocated}"/></strong>
                 </div>
 
                 <div class="metric">
                     <span>Below Minimum Enrolment</span>
-                    <strong id="reportLowEnrolment">—</strong>
+                    <strong id="reportLowEnrolment"><c:out value="${reportSummary.belowMinEnrolmentCount}"/></strong>
                 </div>
-
             </div>
 
-            <!-- EXPORT REPORT -->
+            <!-- EXPORT REPORT & FILTER -->
             <section class="surface">
 
                 <div class="mb-4">
-                    <h2 class="h5 mb-1">Export Report</h2>
-                    <p class="form-hint mb-0">
-                        Choose an allocation form and export format.
+                    <h2 class="h5 mb-1">Export Report (XML Only)</h2>
+                    <p class="form-hint mb-0 text-muted small">
+                        Choose an allocation form to filter results and download the official report in XML format.
                     </p>
                 </div>
 
-                <form class="row g-3" id="reportForm">
-
+                <form class="row g-3" method="GET" action="${pageContext.request.contextPath}/reports">
                     <div class="col-md-6">
                         <label class="form-label" for="reportFormId">
-                            Allocation Form
+                            Allocation Form Filter
                         </label>
 
-                        <select class="form-select" id="reportFormId">
-                            <option value="">Select a form</option>
-                            <option value="OEC">Open Elective (OEC)</option>
-                            <option value="DE">Departmental Elective</option>
-                            <option value="PE">Professional Elective</option>
+                        <select class="form-select" id="reportFormId" name="formId" onchange="this.form.submit()">
+                            <option value="">All Allocation Forms</option>
+                            <c:forEach var="f" items="${forms}">
+                                <option value="${f.formId}" ${selectedFormId == f.formId ? 'selected' : ''}>
+                                    Form #${f.formId} - <c:out value="${f.formName}"/> (<c:out value="${f.categoryName}"/>)
+                                </option>
+                            </c:forEach>
                         </select>
                     </div>
 
@@ -170,62 +190,72 @@
                         <label class="form-label" for="reportFormat">
                             Export Format
                         </label>
-
-                        <select class="form-select" id="reportFormat">
-                            <option value="csv">CSV</option>
-                            <option value="xml">XML</option>
+                        <select class="form-select bg-light" id="reportFormat" disabled>
+                            <option value="xml" selected>XML Format (.xml)</option>
                         </select>
                     </div>
 
                     <div class="col-md-3 d-flex align-items-end">
-                        <button
-                            type="button"
-                            class="btn btn-primary w-100"
-                            id="prepareReportButton"
-                            onclick="alert('Connect this export action to the report servlet.')">
-                            Prepare Export
-                        </button>
+                        <a href="${pageContext.request.contextPath}/reports/export${selectedFormId != null ? '?formId=' : ''}${selectedFormId != null ? selectedFormId : ''}"
+                           class="btn btn-primary w-100" id="prepareReportButton">
+                            Download XML Report &darr;
+                        </a>
                     </div>
-
                 </form>
 
                 <!-- REPORT TABLE -->
                 <div class="table-responsive mt-4">
-
                     <table class="table align-middle">
-
                         <thead>
                             <tr>
-                                <th>Elective</th>
+                                <th>Code</th>
+                                <th>Elective Name</th>
                                 <th>Capacity</th>
                                 <th>Allocated</th>
-                                <th>Utilisation</th>
+                                <th>Seat Utilisation</th>
                                 <th>Enrolment Status</th>
                             </tr>
                         </thead>
 
                         <tbody id="reportRows">
-                            <tr>
-                                <td colspan="5">
-                                    <div class="empty-state">
-                                        <strong>No report data available</strong>
-                                        <p class="mb-0">
-                                            Run and publish an allocation to
-                                            populate this report.
-                                        </p>
-                                    </div>
-                                </td>
-                            </tr>
+                            <c:choose>
+                                <c:when test="${not empty reportRows}">
+                                    <c:forEach var="row" items="${reportRows}">
+                                        <tr>
+                                            <td><strong><c:out value="${row.electiveCode}"/></strong></td>
+                                            <td><c:out value="${row.electiveName}"/></td>
+                                            <td><c:out value="${row.capacity}"/></td>
+                                            <td><strong><c:out value="${row.allocatedCount}"/></strong></td>
+                                            <td><c:out value="${row.utilisation}"/></td>
+                                            <td>
+                                                <span class="badge-status ${row.enrolmentStatus == 'OK' ? 'badge-ok' : (row.enrolmentStatus == 'BELOW_MINIMUM_ENROLMENT' ? 'badge-low' : 'badge-pending')}">
+                                                    <c:out value="${row.enrolmentStatus}"/>
+                                                </span>
+                                            </td>
+                                        </tr>
+                                    </c:forEach>
+                                </c:when>
+                                <c:otherwise>
+                                    <tr>
+                                        <td colspan="6">
+                                            <div class="empty-state text-center py-4 text-muted">
+                                                <strong>No report data available</strong>
+                                                <p class="mb-0">
+                                                    No electives found for the selected filter.
+                                                </p>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                </c:otherwise>
+                            </c:choose>
                         </tbody>
-
                     </table>
-
                 </div>
 
             </section>
 
-            <footer class="app-footer">
-                Electra · Departmental Elective Allocation System
+            <footer class="app-footer text-muted small py-3">
+                Electra &bull; Departmental Elective Allocation System &bull; Academic Year 2026–27
             </footer>
 
         </section>
@@ -234,7 +264,6 @@
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-<script src="assets/js/admin.js"></script>
 
 </body>
 </html>

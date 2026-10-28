@@ -1,3 +1,11 @@
+<%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%
+    if (request.getAttribute("studentData") == null) {
+        response.sendRedirect(request.getContextPath() + "/dashboard");
+        return;
+    }
+%>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -19,7 +27,7 @@
         <header class="topbar">
             <div>
                 <div class="topbar-label">Academic Workspace</div>
-                <div class="topbar-title" id="pageTitle">Dashboard</div>
+                <div class="topbar-title" id="pageTitle">Student Dashboard</div>
             </div>
             <div class="topbar-right">
                 <span class="status-dot"></span>
@@ -29,7 +37,7 @@
         <section class="page-content">
             <div class="welcome-section">
                 <div class="eyebrow">Your workspace</div>
-                <h1 id="welcomeTitle">Welcome back!</h1>
+                <h1 id="welcomeTitle">Welcome back, <c:out value="${not empty sessionScope.studentName ? sessionScope.studentName : sessionScope.username}"/>!</h1>
                 <p id="welcomeDescription">
                     Here is an overview of your elective allocation.
                 </p>
@@ -54,24 +62,24 @@
                         <span>Available Electives</span>
                         <span class="stat-icon icon-sand"><svg class="icon" aria-hidden="true" focusable="false"><use href="#i-book"/></svg></span>
                     </div>
-                    <div class="stat-number" id="electiveCount">—</div>
-                    <div class="stat-caption">Subjects offered this semester</div>
+                    <div class="stat-number" id="electiveCount"><c:out value="${studentData.availableElectivesCount}"/></div>
+                    <div class="stat-caption">Active subjects offered</div>
                 </article>
                 <article class="stat-card">
                     <div class="stat-top">
                         <span>Preferences</span>
                         <span class="stat-icon icon-terracotta"><svg class="icon" aria-hidden="true" focusable="false"><use href="#i-rank"/></svg></span>
                     </div>
-                    <div class="stat-number" id="preferenceCount">—</div>
-                    <div class="stat-caption" id="preferenceCaption">Rank every available elective</div>
+                    <div class="stat-number" id="preferenceCount"><c:out value="${studentData.preferenceCount}"/></div>
+                    <div class="stat-caption" id="preferenceCaption">Completed submissions</div>
                 </article>
                 <article class="stat-card">
                     <div class="stat-top">
                         <span>Allocation Status</span>
                         <span class="stat-icon icon-sage"><svg class="icon" aria-hidden="true" focusable="false"><use href="#i-check"/></svg></span>
                     </div>
-                    <div class="stat-number stat-status" id="allocationStatus">Pending</div>
-                    <div class="stat-caption" id="allocationCaption">Final results not published</div>
+                    <div class="stat-number stat-status" id="allocationStatus"><c:out value="${studentData.allocationStatus}"/></div>
+                    <div class="stat-caption" id="allocationCaption"><c:out value="${studentData.allocationCaption}"/></div>
                 </article>
             </div>
             <div class="section-heading section-heading-spaced">
@@ -81,20 +89,20 @@
                 </p>
             </div>
             <div class="actions-grid" id="actionsGrid">
-                <a href="electives.jsp" class="action-card">
+                <a href="${pageContext.request.contextPath}/electives" class="action-card">
                     <div class="action-icon icon-sand"><svg class="icon" aria-hidden="true" focusable="false"><use href="#i-book"/></svg></div>
                     <h3>Explore Electives</h3>
                     <p>Review subjects, syllabi, faculty and seat availability.</p>
                     <span class="action-link">View subjects <svg class="icon icon-sm" aria-hidden="true" focusable="false"><use href="#i-arrow"/></svg></span>
                 </a>
-                <a href="preferences.jsp" class="action-card">
+                <a href="${pageContext.request.contextPath}/preferences" class="action-card">
                     <div class="action-icon icon-terracotta"><svg class="icon" aria-hidden="true" focusable="false"><use href="#i-rank"/></svg></div>
                     <h3>Rank Preferences</h3>
                     <p>Rank all available electives from most to least preferred.</p>
                     <span class="action-link">Rank electives <svg class="icon icon-sm" aria-hidden="true" focusable="false"><use href="#i-arrow"/></svg></span>
                 </a>
-                <a href="allocation-results.jsp" class="action-card">
-                    <div class="action-icon icon-sage"><svg class="icon" aria-hidden="true" focusable="false"><use href="#i-check"/></svg></div>
+                <a href="${pageContext.request.contextPath}/allocation-results" class="action-card">
+                    <div class="action-icon icon-sage"><svg class="icon" aria-hidden="true" focusable="false"><use href="#i-check"/></svg></span>
                     <h3>View Allocation</h3>
                     <p>Check your final assigned elective when results are released.</p>
                     <span class="action-link">View status <svg class="icon icon-sm" aria-hidden="true" focusable="false"><use href="#i-arrow"/></svg></span>
@@ -107,6 +115,5 @@
         </section>
     </main>
 </div>
-<script src="assets/js/dashboard.js"></script>
 </body>
 </html>

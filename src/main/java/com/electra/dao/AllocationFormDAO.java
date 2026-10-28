@@ -270,4 +270,18 @@ public boolean closeForm(long formId) throws SQLException {
     }
 
 
+
+    public boolean publishResults(long formId) throws SQLException {
+        if (formId <= 0) {
+            throw new IllegalArgumentException("A valid form ID is required.");
+        }
+        String sql = "UPDATE allocation_forms SET results_published = TRUE " +
+                     "WHERE form_id = ? AND allocation_status = 'COMPLETED' " +
+                     "AND review_status = 'REVIEWED' AND results_published = FALSE";
+        try (Connection conn = DBConnection.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+            stmt.setLong(1, formId);
+            return stmt.executeUpdate() > 0;
+        }
+    }
 }

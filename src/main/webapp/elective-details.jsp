@@ -17,7 +17,7 @@
         </jsp:include>
         <main class="main-content">
     <div class="container detail-container">
-        <a href="electives.jsp" class="back-link">
+        <a href="electives" class="back-link">
             <span aria-hidden="true">←</span> Back to all electives
         </a>
         <div id="electiveDetail">

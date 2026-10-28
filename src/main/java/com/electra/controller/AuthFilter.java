@@ -1,4 +1,3 @@
-
 package com.electra.controller;
 
 import jakarta.servlet.Filter;
@@ -13,29 +12,45 @@ import jakarta.servlet.http.HttpSession;
 
 import java.io.IOException;
 import java.util.Set;
+import java.util.UUID;
 
 @WebFilter(urlPatterns = {
     "/dashboard.jsp",
     "/profile",
     "/preferences.jsp",
+    "/preferences",
     "/allocation-results.jsp",
+    "/allocation-results",
     "/electives.jsp",
+    "/electives",
     "/elective-details.jsp",
     "/admin.jsp",
     "/admin-electives.jsp",
+    "/admin-electives",
     "/admin-students.jsp",
+    "/admin-students",
     "/admin-allocations.jsp",
-    "/reports.jsp"
+    "/admin-allocations",
+    "/admin/allocation",
+    "/reports.jsp",
+    "/reports",
+    "/reports/export"
 })
 public class AuthFilter implements Filter {
 
-    // Pages accessible only to administrators.
+    // Pages and endpoints accessible only to administrators.
     private static final Set<String> ADMIN_PATHS = Set.of(
         "/admin.jsp",
         "/admin-electives.jsp",
+        "/admin-electives",
         "/admin-students.jsp",
+        "/admin-students",
         "/admin-allocations.jsp",
-        "/reports.jsp"
+        "/admin-allocations",
+        "/admin/allocation",
+        "/reports.jsp",
+    "/reports",
+    "/reports/export"
     );
 
     @Override
@@ -64,7 +79,12 @@ public class AuthFilter implements Filter {
             return;
         }
 
-        // 2. Only administrators can access admin-only pages.
+        // Initialize CSRF token if missing
+        if (session != null && session.getAttribute("csrfToken") == null) {
+            session.setAttribute("csrfToken", UUID.randomUUID().toString());
+        }
+
+        // 2. Only administrators can access admin-only pages and endpoints.
         if (ADMIN_PATHS.contains(path)) {
 
             if (!"ADMIN".equals(role)) {
@@ -91,7 +111,7 @@ public class AuthFilter implements Filter {
         }
 
         // 4. Both students and administrators can view electives.
-        else if ("/electives.jsp".equals(path)) {
+        else if ("/electives.jsp".equals(path) || "/electives".equals(path) || "/elective-details.jsp".equals(path)) {
 
             if (!"STUDENT".equals(role)
                     && !"ADMIN".equals(role)) {

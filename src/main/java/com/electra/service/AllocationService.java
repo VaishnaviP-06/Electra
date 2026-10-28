@@ -7,6 +7,7 @@ import com.electra.model.AllocationCandidate;
 import com.electra.model.AllocationForm;
 import com.electra.model.AllocationResult;
 import com.electra.model.Elective;
+import com.electra.model.ElectiveReviewDetail;
 import com.electra.model.Preference;
 
 import java.sql.SQLException;
@@ -239,4 +240,18 @@ public class AllocationService {
         allocationDAO.finalizeReviewedAllocation(formId);
     }
 
+
+    public boolean hasPreparedReviews(long formId) throws SQLException {
+        if (formId <= 0) {
+            throw new IllegalArgumentException("Valid allocation form ID is required.");
+        }
+        return allocationDAO.hasPreparedReviews(formId);
+    }
+
+    public List<ElectiveReviewDetail> getElectiveReviewDetails(long formId) throws SQLException {
+        if (formId <= 0) {
+            throw new IllegalArgumentException("Valid allocation form ID is required.");
+        }
+        return allocationDAO.findElectiveReviewDetails(formId);
+    }
 }

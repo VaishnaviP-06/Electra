@@ -116,4 +116,18 @@ public class AllocationFormService {
     private boolean isBlank(String value) {
         return value == null || value.isBlank();
     }
+
+    public boolean publishResults(long formId) throws SQLException {
+        AllocationForm form = getFormById(formId);
+        if (!"COMPLETED".equals(form.getAllocationStatus())) {
+            throw new IllegalStateException("Cannot publish results before allocation is completed.");
+        }
+        if (!"REVIEWED".equals(form.getReviewStatus())) {
+            throw new IllegalStateException("Cannot publish results before elective reviews are completed.");
+        }
+        if (form.isResultsPublished()) {
+            throw new IllegalStateException("Results have already been published for this form.");
+        }
+        return formDAO.publishResults(formId);
+    }
 }

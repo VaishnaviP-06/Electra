@@ -2,6 +2,8 @@ package com.electra.dao;
 
 import com.electra.model.AllocationCandidate;
 import com.electra.model.AllocationResult;
+import com.electra.model.ElectiveReviewDetail;
+import com.electra.model.StudentAllocationView;
 import com.electra.model.Preference;
 import com.electra.util.DBConnection;
 
@@ -695,4 +697,122 @@ public class AllocationDAO {
         }
     }
 
+
+    public boolean hasPreparedReviews(long formId) throws SQLException {
+        String sql = "SELECT COUNT(*) FROM elective_form_reviews WHERE form_id = ?";
+        try (Connection conn = DBConnection.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+            stmt.setLong(1, formId);
+            try (ResultSet rs = stmt.executeQuery()) {
+                return rs.next() && rs.getLong(1) > 0;
+            }
+        }
+    }
+
+    public List<ElectiveReviewDetail> findElectiveReviewDetails(long formId) throws SQLException {
+        String sql =
+            "SELECT " +
+            "    e.elective_id, " +
+            "    e.form_id, " +
+            "    e.elective_code, " +
+            "    e.elective_name, " +
+            "    e.total_seats, " +
+            "    e.min_students, " +
+            "    e.min_cgpa, " +
+            "    e.is_active, " +
+            "    e.enrolment_status, " +
+            "    COALESCE(r.review_status, 'NOT_PREPARED') AS review_status, " +
+            "    r.review_notes, " +
+            "    r.reviewed_by, " +
+            "    u.username AS reviewer_username, " +
+            "    r.reviewed_at, " +
+            "    (SELECT COUNT(*) FROM allocations a " +
+            "     WHERE a.form_id = e.form_id " +
+            "       AND a.elective_id = e.elective_id " +
+            "       AND a.allocation_run_id = ( " +
+            "           SELECT MAX(ar2.allocation_run_id) FROM allocation_runs ar2 " +
+            "           WHERE ar2.form_id = e.form_id AND ar2.run_status = 'COMPLETED' " +
+            "       ) " +
+            "    ) AS provisional_enrolment " +
+            "FROM electives e " +
+            "LEFT JOIN elective_form_reviews r ON r.form_id = e.form_id AND r.elective_id = e.elective_id " +
+            "LEFT JOIN users u ON u.user_id = r.reviewed_by " +
+            "WHERE e.form_id = ? AND e.is_active = 1 " +
+            "ORDER BY e.elective_code";
+
+        List<ElectiveReviewDetail> list = new ArrayList<>();
+        try (Connection conn = DBConnection.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+            stmt.setLong(1, formId);
+            try (ResultSet rs = stmt.executeQuery()) {
+                while (rs.next()) {
+                    ElectiveReviewDetail detail = new ElectiveReviewDetail();
+                    detail.setElectiveId(rs.getLong("elective_id"));
+                    detail.setFormId(rs.getLong("form_id"));
+                    detail.setElectiveCode(rs.getString("elective_code"));
+                    detail.setElectiveName(rs.getString("elective_name"));
+                    detail.setTotalSeats(rs.getInt("total_seats"));
+                    detail.setMinStudents(rs.getInt("min_students"));
+
+                    double minCgpa = rs.getDouble("min_cgpa");
+                    detail.setMinCgpa(rs.wasNull() ? null : minCgpa);
+
+                    detail.setActive(rs.getBoolean("is_active"));
+                    detail.setEnrolmentStatus(rs.getString("enrolment_status"));
+                    detail.setReviewStatus(rs.getString("review_status"));
+                    detail.setReviewNotes(rs.getString("review_notes"));
+
+                    long reviewerId = rs.getLong("reviewed_by");
+                    detail.setReviewedBy(rs.wasNull() ? null : reviewerId);
+
+                    detail.setReviewerUsername(rs.getString("reviewer_username"));
+                    detail.setReviewedAt(rs.getTimestamp("reviewed_at"));
+                    detail.setProvisionalEnrolment(rs.getLong("provisional_enrolment"));
+
+                    list.add(detail);
+                }
+            }
+        }
+        return list;
+    }
+
+    public List<StudentAllocationView> findStudentAllocations(long studentId) throws SQLException {
+        String sql =
+            "SELECT f.form_id, f.form_name, f.results_published, " +
+            "       ps.submission_status, ps.submitted_at, " +
+            "       a.allocation_status, a.allocation_reason, " +
+            "       e.elective_code, e.elective_name, e.faculty_name " +
+            "FROM allocation_forms f " +
+            "LEFT JOIN preference_submissions ps ON ps.form_id = f.form_id AND ps.student_id = ? " +
+            "LEFT JOIN allocations a ON a.form_id = f.form_id AND a.student_id = ? " +
+            "          AND a.allocation_run_id = (SELECT MAX(ar.allocation_run_id) FROM allocation_runs ar WHERE ar.form_id = f.form_id AND ar.run_status = 'COMPLETED') " +
+            "LEFT JOIN electives e ON e.elective_id = a.elective_id AND e.form_id = a.form_id " +
+            "WHERE ps.submission_status IS NOT NULL OR a.allocation_id IS NOT NULL OR f.form_status = 'OPEN' " +
+            "ORDER BY f.form_id";
+
+        List<StudentAllocationView> views = new ArrayList<>();
+        try (Connection conn = DBConnection.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+            stmt.setLong(1, studentId);
+            stmt.setLong(2, studentId);
+
+            try (ResultSet rs = stmt.executeQuery()) {
+                while (rs.next()) {
+                    StudentAllocationView view = new StudentAllocationView();
+                    view.setFormId(rs.getLong("form_id"));
+                    view.setFormName(rs.getString("form_name"));
+                    view.setResultsPublished(rs.getBoolean("results_published"));
+                    view.setSubmissionStatus(rs.getString("submission_status"));
+                    view.setSubmittedAt(rs.getTimestamp("submitted_at"));
+                    view.setAllocationStatus(rs.getString("allocation_status"));
+                    view.setAllocationReason(rs.getString("allocation_reason"));
+                    view.setElectiveCode(rs.getString("elective_code"));
+                    view.setElectiveName(rs.getString("elective_name"));
+                    view.setFacultyName(rs.getString("faculty_name"));
+                    views.add(view);
+                }
+            }
+        }
+        return views;
+    }
 }
