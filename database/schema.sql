@@ -107,8 +107,7 @@ CREATE TABLE preference_submissions (
     student_id BIGINT NOT NULL,
     form_id BIGINT NOT NULL,
 
-    submitted_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP
-        ON UPDATE CURRENT_TIMESTAMP,
+    submitted_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
 
     submission_status ENUM('DRAFT', 'SUBMITTED')
         NOT NULL DEFAULT 'SUBMITTED',
