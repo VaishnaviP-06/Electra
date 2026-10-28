@@ -1,62 +1,49 @@
-
 function getSelectedPreferenceIds() {
-    return [
-        document.getElementById("preference1")?.value || "",
-        document.getElementById("preference2")?.value || "",
-        document.getElementById("preference3")?.value || ""
-    ];
+    return Array.from(document.querySelectorAll("#preferenceFields .preference-select"))
+        .map(select => select.value || "");
 }
-
 function validatePreferences() {
     const selected = getSelectedPreferenceIds();
     const chosen = selected.filter(Boolean);
     const available = getAvailableElectives().map(item => String(item.id));
-
-    if (!selected[0]) {
+    if (available.length === 0) {
+        return { valid: false, message: "No electives are currently available to rank." };
+    }
+    if (chosen.length !== available.length || selected.some(id => !id)) {
         return {
             valid: false,
-            message: "Please select your first preference."
+            message: "Please rank every available elective before saving your preferences."
         };
     }
-
     if (new Set(chosen).size !== chosen.length) {
         return {
             valid: false,
             message: "Please choose a different elective for each preference."
         };
     }
-
     if (chosen.some(id => !available.includes(String(id)))) {
         return {
             valid: false,
             message: "One of your selected electives is no longer available. Please select again."
         };
     }
-
     return {
         valid: true,
         message: "Your preferences are valid."
     };
 }
-
 function showPreferenceMessage(message, type = "info") {
     const box = document.getElementById("validationMessage");
-
     if (!box) return;
-
     box.textContent = message;
     box.className = "alert alert-" + type;
 }
-
 function clearPreferenceMessage() {
     const box = document.getElementById("validationMessage");
-
     if (!box) return;
-
     box.textContent = "";
     box.className = "alert d-none";
 }
-
 function savePreferencesToBrowser(preferences) {
     try {
         const record = {
@@ -64,7 +51,6 @@ function savePreferencesToBrowser(preferences) {
             submittedAt: new Date().toISOString(),
             status: "Pending"
         };
-
         localStorage.setItem("electraPreferences", JSON.stringify(record));
         return true;
     } catch (error) {
@@ -72,7 +58,6 @@ function savePreferencesToBrowser(preferences) {
         return false;
     }
 }
-
 function getSavedPreferences() {
     try {
         const stored = localStorage.getItem("electraPreferences");

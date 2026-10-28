@@ -1,0 +1,440 @@
+/* -------------------------
+   1. THEME VARIABLES
+   ------------------------- */
+:root {
+    --deep-chestnut-brown: #4A231A;
+    --warm-alabaster-cream: #F8F3ED;
+    --terracotta-earth: #855E4E;
+    --soft-muted-beige: #EFE7DE;
+    --charcoal-black: #2C2623;
+    --electra-primary: var(--deep-chestnut-brown);
+    --electra-secondary: var(--terracotta-earth);
+    --electra-background: var(--warm-alabaster-cream);
+    --electra-surface: #FFFCF7;
+    --electra-border: #E4D8CD;
+    --electra-text: var(--charcoal-black);
+    --electra-muted-text: #75665E;
+    --electra-radius-sm: 8px;
+    --electra-radius-md: 12px;
+    --electra-radius-lg: 18px;
+    --electra-shadow-sm: 0 3px 10px rgba(74, 35, 26, 0.06);
+    --electra-shadow-md: 0 8px 24px rgba(74, 35, 26, 0.09);
+    --electra-shadow-lg: 0 14px 36px rgba(74, 35, 26, 0.12);
+    --electra-transition: 0.2s ease;
+}
+/* -------------------------
+   2. GLOBAL BASE STYLES
+   ------------------------- */
+html {
+    scroll-behavior: smooth;
+}
+body {
+    background-color: var(--electra-background);
+    color: var(--electra-text);
+    font-family: "Segoe UI", Arial, sans-serif;
+}
+a {
+    color: var(--terracotta-earth);
+    text-decoration: none;
+    transition: color var(--electra-transition);
+}
+a:hover {
+    color: var(--deep-chestnut-brown);
+}
+button,
+input,
+select,
+textarea {
+    font: inherit;
+}
+button {
+    transition:
+        background-color var(--electra-transition),
+        color var(--electra-transition),
+        border-color var(--electra-transition),
+        box-shadow var(--electra-transition),
+        transform var(--electra-transition);
+}
+/* -------------------------
+   3. NAVBAR
+   ------------------------- */
+.navbar {
+    background-color: var(--deep-chestnut-brown) !important;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    box-shadow: var(--electra-shadow-sm);
+}
+.navbar-brand {
+    color: var(--warm-alabaster-cream) !important;
+    font-weight: 700;
+    letter-spacing: 0.3px;
+}
+.navbar-brand:hover {
+    color: #FFFFFF !important;
+}
+.navbar .nav-link {
+    color: rgba(255, 252, 247, 0.82) !important;
+    border-radius: 10px !important;
+    padding: 0.55rem 0.85rem;
+    transition: background 0.18s ease, color 0.18s ease;
+}
+.navbar .nav-link:hover,
+.navbar .nav-link:focus {
+    color: #FFFFFF !important;
+    background-color: rgba(255, 255, 255, 0.1);
+}
+.navbar .nav-link.active {
+    color: #FFFFFF !important;
+    background-color: rgba(255, 255, 255, 0.15);
+}
+/* -------------------------
+   4. SIDEBAR
+   ------------------------- */
+.sidebar {
+    background-color: var(--deep-chestnut-brown) !important;
+    color: var(--warm-alabaster-cream);
+}
+.sidebar .nav-link {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    color: rgba(255, 252, 247, 0.82);
+    border-radius: 10px;
+    padding: 0.7rem 0.9rem;
+    margin-bottom: 4px;
+    transition: background 0.18s ease, color 0.18s ease;
+}
+.sidebar .nav-link:hover,
+.sidebar .nav-link:focus {
+    color: #FFFFFF;
+    background-color: rgba(255, 255, 255, 0.1);
+}
+.sidebar .nav-link.active {
+    color: #FFFFFF;
+    background-color: rgba(255, 255, 255, 0.16);
+    font-weight: 600;
+}
+/* -------------------------
+   5. MAIN CONTENT
+   ------------------------- */
+.main-content {
+    background-color: var(--warm-alabaster-cream) !important;
+    color: var(--charcoal-black);
+}
+.page-header {
+    margin-bottom: 1.5rem;
+}
+.page-title {
+    color: var(--deep-chestnut-brown);
+    font-weight: 700;
+    letter-spacing: -0.3px;
+}
+.page-subtitle {
+    color: var(--electra-muted-text);
+}
+/* -------------------------
+   6. CARDS AND PANELS
+   ------------------------- */
+.card {
+    background-color: var(--electra-surface);
+    border: 1px solid var(--electra-border);
+    border-radius: var(--electra-radius-md);
+    box-shadow: var(--electra-shadow-sm);
+    transition:
+        box-shadow var(--electra-transition),
+        transform var(--electra-transition),
+        border-color var(--electra-transition);
+}
+.card:hover {
+    border-color: #D7C3B4;
+    box-shadow: var(--electra-shadow-md);
+}
+.card-header {
+    background-color: var(--soft-muted-beige);
+    color: var(--deep-chestnut-brown);
+    border-bottom: 1px solid var(--electra-border);
+    font-weight: 600;
+}
+.card-footer {
+    background-color: #FBF7F2;
+    border-top: 1px solid var(--electra-border);
+}
+.panel,
+.content-panel {
+    background-color: var(--electra-surface);
+    border: 1px solid var(--electra-border);
+    border-radius: var(--electra-radius-md);
+    box-shadow: var(--electra-shadow-sm);
+}
+/* -------------------------
+   7. BUTTONS
+   ------------------------- */
+.btn-primary {
+    color: #FFFFFF;
+    background-color: var(--deep-chestnut-brown);
+    border-color: var(--deep-chestnut-brown);
+    border-radius: var(--electra-radius-sm);
+}
+.btn-primary:hover,
+.btn-primary:focus {
+    color: #FFFFFF;
+    background-color: #351810;
+    border-color: #351810;
+    box-shadow: 0 4px 12px rgba(74, 35, 26, 0.18);
+}
+.btn-secondary {
+    color: #FFFFFF;
+    background-color: var(--terracotta-earth);
+    border-color: var(--terracotta-earth);
+    border-radius: var(--electra-radius-sm);
+}
+.btn-secondary:hover,
+.btn-secondary:focus {
+    color: #FFFFFF;
+    background-color: #704B3D;
+    border-color: #704B3D;
+}
+.btn-outline-primary {
+    color: var(--deep-chestnut-brown);
+    border-color: var(--deep-chestnut-brown);
+    border-radius: var(--electra-radius-sm);
+}
+.btn-outline-primary:hover,
+.btn-outline-primary:focus {
+    color: #FFFFFF;
+    background-color: var(--deep-chestnut-brown);
+    border-color: var(--deep-chestnut-brown);
+}
+.btn-light {
+    color: var(--deep-chestnut-brown);
+    background-color: var(--soft-muted-beige);
+    border-color: var(--electra-border);
+}
+.btn-light:hover,
+.btn-light:focus {
+    color: var(--deep-chestnut-brown);
+    background-color: #E5D9CE;
+    border-color: #D7C3B4;
+}
+/* -------------------------
+   8. FORMS
+   ------------------------- */
+.form-label {
+    color: var(--deep-chestnut-brown);
+    font-weight: 600;
+}
+.form-control,
+.form-select {
+    color: var(--charcoal-black);
+    background-color: #FFFCF8;
+    border: 1px solid #DCCFC3;
+    border-radius: var(--electra-radius-sm);
+    transition:
+        border-color var(--electra-transition),
+        box-shadow var(--electra-transition);
+}
+.form-control:focus,
+.form-select:focus {
+    color: var(--charcoal-black);
+    background-color: #FFFFFF;
+    border-color: var(--terracotta-earth);
+    box-shadow: 0 0 0 0.2rem rgba(133, 94, 78, 0.15);
+}
+.form-control::placeholder {
+    color: #9B8C82;
+    opacity: 1;
+}
+.form-check-input {
+    border-color: #BFA99A;
+}
+.form-check-input:checked {
+    background-color: var(--deep-chestnut-brown);
+    border-color: var(--deep-chestnut-brown);
+}
+.form-check-input:focus {
+    border-color: var(--terracotta-earth);
+    box-shadow: 0 0 0 0.2rem rgba(133, 94, 78, 0.15);
+}
+/* -------------------------
+   9. TABLES
+   ------------------------- */
+.table {
+    color: var(--charcoal-black);
+    border-color: var(--electra-border);
+}
+.table thead th {
+    color: var(--deep-chestnut-brown);
+    background-color: var(--soft-muted-beige);
+    border-bottom: 1px solid #DCCFC3;
+    font-weight: 700;
+    vertical-align: middle;
+}
+.table tbody td {
+    background-color: var(--electra-surface);
+    border-color: var(--electra-border);
+    vertical-align: middle;
+}
+.table-striped > tbody > tr:nth-of-type(odd) > * {
+    background-color: #FBF7F2;
+    color: var(--charcoal-black);
+}
+.table-hover > tbody > tr:hover > * {
+    background-color: #F1E6DC;
+    color: var(--charcoal-black);
+}
+/* -------------------------
+   10. BADGES AND STATUS
+   ------------------------- */
+.badge {
+    border-radius: 999px;
+    font-weight: 600;
+    padding: 0.4em 0.7em;
+}
+.bg-primary {
+    background-color: var(--deep-chestnut-brown) !important;
+}
+.bg-secondary {
+    background-color: var(--terracotta-earth) !important;
+}
+.text-primary {
+    color: var(--deep-chestnut-brown) !important;
+}
+.text-secondary {
+    color: var(--terracotta-earth) !important;
+}
+/* -------------------------
+   11. ALERTS
+   ------------------------- */
+.alert {
+    border-radius: var(--electra-radius-sm);
+    border-width: 1px;
+}
+.alert-primary {
+    color: var(--deep-chestnut-brown);
+    background-color: #F2E7DE;
+    border-color: #E1CDBE;
+}
+.alert-secondary {
+    color: var(--charcoal-black);
+    background-color: var(--soft-muted-beige);
+    border-color: var(--electra-border);
+}
+/* -------------------------
+   12. DROPDOWNS
+   ------------------------- */
+.dropdown-menu {
+    background-color: var(--electra-surface);
+    border: 1px solid var(--electra-border);
+    border-radius: var(--electra-radius-sm);
+    box-shadow: var(--electra-shadow-md);
+    padding: 0.4rem;
+}
+.dropdown-item {
+    color: var(--charcoal-black);
+    border-radius: 6px;
+    transition: background-color var(--electra-transition), color var(--electra-transition);
+}
+.dropdown-item:hover,
+.dropdown-item:focus {
+    color: var(--deep-chestnut-brown);
+    background-color: var(--soft-muted-beige);
+}
+.dropdown-item.active,
+.dropdown-item:active {
+    color: #FFFFFF;
+    background-color: var(--deep-chestnut-brown);
+}
+/* -------------------------
+   13. MODALS
+   ------------------------- */
+.modal-content {
+    color: var(--charcoal-black);
+    background-color: var(--electra-surface);
+    border: 1px solid var(--electra-border);
+    border-radius: var(--electra-radius-lg);
+    box-shadow: var(--electra-shadow-lg);
+}
+.modal-header {
+    color: var(--deep-chestnut-brown);
+    background-color: var(--soft-muted-beige);
+    border-bottom-color: var(--electra-border);
+}
+.modal-footer {
+    border-top-color: var(--electra-border);
+}
+/* -------------------------
+   14. PAGINATION
+   ------------------------- */
+.pagination .page-link {
+    color: var(--deep-chestnut-brown);
+    background-color: var(--electra-surface);
+    border-color: var(--electra-border);
+    transition:
+        background-color var(--electra-transition),
+        color var(--electra-transition),
+        border-color var(--electra-transition);
+}
+.pagination .page-link:hover {
+    color: var(--deep-chestnut-brown);
+    background-color: var(--soft-muted-beige);
+    border-color: #D7C3B4;
+}
+.pagination .page-item.active .page-link {
+    color: #FFFFFF;
+    background-color: var(--deep-chestnut-brown);
+    border-color: var(--deep-chestnut-brown);
+}
+/* -------------------------
+   15. BREADCRUMBS
+   ------------------------- */
+.breadcrumb {
+    background-color: transparent;
+}
+.breadcrumb-item {
+    color: var(--electra-muted-text);
+}
+.breadcrumb-item a {
+    color: var(--terracotta-earth);
+}
+.breadcrumb-item.active {
+    color: var(--charcoal-black);
+}
+.breadcrumb-item + .breadcrumb-item::before {
+    color: #A18C7D;
+}
+/* -------------------------
+   16. FOCUS AND ACCESSIBILITY
+   ------------------------- */
+a:focus-visible,
+button:focus-visible,
+input:focus-visible,
+select:focus-visible,
+textarea:focus-visible {
+    outline: 2px solid var(--terracotta-earth);
+    outline-offset: 3px;
+}
+/* -------------------------
+   17. RESPONSIVE ADJUSTMENTS
+   ------------------------- */
+@media (max-width: 768px) {
+    .page-header {
+        margin-bottom: 1rem;
+    }
+    .card {
+        border-radius: var(--electra-radius-sm);
+    }
+    .table-responsive {
+        border-radius: var(--electra-radius-sm);
+    }
+}
+@media (prefers-reduced-motion: reduce) {
+    html {
+        scroll-behavior: auto;
+    }
+    *,
+    *::before,
+    *::after {
+        transition-duration: 0.01ms !important;
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+    }
+}

@@ -11,10 +11,10 @@
           rel="stylesheet">
     <link rel="stylesheet" href="assets/css/style.css">
     <link rel="stylesheet" href="assets/css/login.css?v=7">
+    <link rel="stylesheet" href="assets/css/app-polish.css">
 </head>
 <body class="electra-login-page">
 <div class="login-layout">
-    <!-- LEFT PANEL -->
     <aside class="brand-panel">
         <a href="index.jsp" class="brand-header">
             <div class="brand-icon">E</div>
@@ -69,13 +69,11 @@
             <span>Better choices. Brighter futures.</span>
         </div>
     </aside>
-    <!-- RIGHT LOGIN PANEL -->
     <main class="login-panel">
         <div class="top-slogan">
             BETTER CHOICES <span>✦</span> BRIGHTER FUTURES
         </div>
         <section class="login-container" aria-labelledby="loginTitle">
-            <!-- MOBILE BRAND -->
             <div class="mobile-brand">
                 <div class="brand-icon">E</div>
                 <div>
@@ -83,7 +81,6 @@
                     <div class="brand-subtitle">Department Portal</div>
                 </div>
             </div>
-            <!-- HEADING -->
             <div class="card-header">
                 <span class="welcome-badge">WELCOME BACK</span>
                 <h2 class="login-title" id="loginTitle">
@@ -94,7 +91,6 @@
                     preferences, submissions and results.
                 </p>
             </div>
-            <!-- ROLE SELECTOR -->
             <div class="role-switcher"
                  role="group"
                  aria-label="Choose account type">
@@ -117,14 +113,15 @@
                     Administrator
                 </button>
             </div>
-            <!-- LOGIN FORM -->
-            <form id="loginForm" action="login" method="post" novalidate>
+            <% if (request.getAttribute("loginError") != null) { String loginError = String.valueOf(request.getAttribute("loginError")).replace("&", "&amp;").replace("<", "&lt;").replace(">", "&gt;"); %>
+            <div class="alert alert-danger" role="alert"><%= loginError %></div>
+            <% } %>
+            <form id="loginForm" action="${pageContext.request.contextPath}/login" method="post" novalidate>
                 <input
                     type="hidden"
                     id="role"
                     name="role"
                     value="student">
-                <!-- EMAIL -->
                 <div class="field-group">
                     <label
                         for="userId"
@@ -151,7 +148,6 @@
                         </div>
                     </div>
                 </div>
-                <!-- PASSWORD -->
                 <div class="field-group">
                     <label for="password" class="form-label">
                         Password <span>*</span>
@@ -182,7 +178,6 @@
                                 aria-live="polite">
                             </div>
                 </div>
-                <!-- REMEMBER ME / FORGOT PASSWORD -->
                 <div class="login-options">
                     <label class="remember-label">
                         <input
@@ -195,12 +190,10 @@
                         Forgot password?
                     </a>
                 </div>
-                <!-- SUBMIT BUTTON -->
                 <button type="submit" class="login-button">
                     <span>Sign in to Electra</span>
                     <span aria-hidden="true">→</span>
                 </button>
-                <!-- VALIDATION MESSAGE -->
                 <div
                     id="loginMessage"
                     class="alert mt-3 d-none"
@@ -208,7 +201,6 @@
                     aria-live="polite">
                 </div>
             </form>
-            <!-- SECURITY INFORMATION -->
             <div class="security-note">
                 <div class="security-icon">✓</div>
                 <div>
@@ -218,12 +210,9 @@
                     </p>
                 </div>
             </div>
-            <!-- REQUESTED FOOTER TEXT REMOVED -->
         </section>
-        <!-- BOTTOM FOOTER TEXT REMOVED -->
     </main>
 </div>
-<!-- FORGOT PASSWORD MODAL -->
 <div
     class="modal-overlay"
     id="forgotModal"
