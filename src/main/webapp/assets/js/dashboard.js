@@ -1,27 +1,27 @@
-const userId = sessionStorage.getItem("electraDemoUser");
-const role = sessionStorage.getItem("electraDemoRole");
-if (!userId || !role) {
-    window.location.replace("login.jsp");
-} else {
-    initializeDashboard();
+// Authentication and role authorization are handled by LoginServlet and AuthFilter.
+// The sidebar (links, user card, sign-out) is rendered by WEB-INF/partials/sidebar.jsp.
+const userId = document.body.dataset.userId || "Student";
+const role = (document.body.dataset.role || "STUDENT").toLowerCase();
+function icon(name, extraClass) {
+    return `<svg class="icon ${extraClass || ""}" aria-hidden="true" focusable="false"><use href="#i-${name}"/></svg>`;
+}
+function actionCard(href, iconName, tone, title, text, linkText) {
+    return `
+            <a href="${href}" class="action-card">
+                <div class="action-icon icon-${tone}">${icon(iconName)}</div>
+                <h3>${title}</h3>
+                <p>${text}</p>
+                <span class="action-link">${linkText} ${icon("arrow", "icon-sm")}</span>
+            </a>`;
 }
 function initializeDashboard() {
     const isAdmin = role === "admin";
-    document.getElementById("sidebarUser").textContent = userId;
-    document.getElementById("userAvatar").textContent =
-        userId.charAt(0).toUpperCase();
-    document.getElementById("sidebarRole").textContent =
-        isAdmin ? "Admin / Faculty" : "Student";
     document.getElementById("welcomeTitle").textContent =
         `Welcome back, ${userId}!`;
     document.getElementById("welcomeDescription").textContent =
         isAdmin
             ? "Manage departmental electives and oversee student allocation."
-            : "Explore electives, submit preferences and track your allocation.";
-    document.getElementById("adminNavigation").classList.toggle(
-        "d-none",
-        !isAdmin
-    );
+            : "Explore electives, rank all available options and track your allocation.";
     if (isAdmin) {
         document.getElementById("pageTitle").textContent = "Admin Dashboard";
         document.getElementById("noticeTitle").textContent =
@@ -38,36 +38,13 @@ function initializeDashboard() {
             "Administrative Actions";
         document.getElementById("quickActionsDescription").textContent =
             "Manage the elective allocation process.";
-        document.getElementById("actionsGrid").innerHTML = `
-            <a href="admin-electives.jsp" class="action-card">
-                <div class="action-icon icon-sand">&#9776;</div>
-                <h3>Manage Electives</h3>
-                <p>Add subjects, configure seat capacity and maintain syllabus details.</p>
-                <span class="action-link">Manage subjects &#8594;</span>
-            </a>
-            <a href="admin-students.jsp" class="action-card">
-                <div class="action-icon icon-terracotta">&#9787;</div>
-                <h3>Manage Students</h3>
-                <p>Review student records and eligibility information.</p>
-                <span class="action-link">View students &#8594;</span>
-            </a>
-            <a href="admin-allocations.jsp" class="action-card">
-                <div class="action-icon icon-sage">&#9636;</div>
-                <h3>Allocation Reports</h3>
-                <p>Review allocation outcomes and prepare final reports.</p>
-                <span class="action-link">View reports &#8594;</span>
-            </a>
-        `;
-        document.getElementById("electivesLink").textContent =
-            "☷ Manage Electives";
-        document.getElementById("preferencesLink").textContent =
-            "⇅ Preference Monitor";
-        document.getElementById("allocationLink").textContent =
-            "✓ Allocation Results";
+        document.getElementById("actionsGrid").innerHTML =
+            actionCard("admin-electives.jsp", "book", "sand", "Manage Electives",
+                "Add subjects, configure seat capacity and maintain syllabus details.", "Manage subjects") +
+            actionCard("admin-students.jsp", "users", "terracotta", "Manage Students",
+                "Review student records and eligibility information.", "View students") +
+            actionCard("admin-allocations.jsp", "report", "sage", "Allocation Reports",
+                "Review allocation outcomes and prepare final reports.", "View reports");
     }
 }
-document.getElementById("logoutButton").addEventListener("click", function () {
-    sessionStorage.removeItem("electraDemoUser");
-    sessionStorage.removeItem("electraDemoRole");
-    window.location.replace("login.jsp");
-});
+initializeDashboard();

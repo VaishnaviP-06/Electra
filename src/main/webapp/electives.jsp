@@ -1,156 +1,33 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Explore Electives | Electra</title>
-
+    <title>Student View | Electra</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="assets/css/style.css">
+    <link rel="stylesheet" href="assets/css/sidebar.css">
+    <link rel="stylesheet" href="assets/css/dashboard.css">
     <link rel="stylesheet" href="assets/css/electives.css">
+    <link rel="stylesheet" href="assets/css/app-polish.css">
+    <style>
+      .student-view-content{max-width:1280px;margin:0 auto}.catalogue-intro{padding:30px 32px;border-radius:18px;background:#4A231A;color:#F8F3ED;margin-bottom:30px;display:flex;justify-content:space-between;align-items:center;gap:25px}.catalogue-intro .eyebrow{color:#E7B69D}.catalogue-intro h1{font-family:Georgia,serif;font-weight:400;font-size:clamp(2rem,4vw,3rem);margin:8px 0 12px}.catalogue-intro p{color:#F0DDD1;max-width:650px;margin:0;line-height:1.75}.intro-mark{width:105px;height:105px;border:1px solid #BFA18B;border-radius:50%;display:grid;place-items:center;font:4.5rem Georgia,serif;color:#E7C5A7;flex-shrink:0}.catalogue-tools{display:grid;grid-template-columns:minmax(0,2fr) minmax(190px,1fr);gap:16px;background:#fff;border:1px solid #EFE7DE;border-radius:14px;padding:20px;margin-bottom:22px}.catalogue-tools label{font-size:.85rem;font-weight:600;color:#4C4039;margin-bottom:8px}.catalogue-tools .form-control,.catalogue-tools .form-select{min-height:44px;border-color:#DCCBB9;border-radius:9px}.student-elective-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:20px}.student-elective-card{background:#fff;border:1px solid #EFE7DE;border-radius:15px;overflow:hidden;display:flex;flex-direction:column;min-height:300px;transition:transform .2s,box-shadow .2s}.student-elective-card:hover{transform:translateY(-4px);box-shadow:0 12px 28px #432c2014}.student-elective-card-head{background:#F1E4D5;padding:20px;display:flex;align-items:center;justify-content:space-between;gap:12px}.student-elective-card-head .elective-number{display:grid;place-items:center;width:42px;height:42px;border-radius:12px;background:#4A231A;color:#F8F3ED;font:1.1rem Georgia,serif}.student-elective-card-head .category-tag{font-size:.72rem;background:#fff;color:#4A231A;border-radius:30px;padding:6px 10px}.student-elective-card-body{padding:22px;display:flex;flex:1;flex-direction:column}.student-elective-card-body .elective-code{font-size:.75rem;font-weight:700;letter-spacing:1px;color:#A46A50}.student-elective-card-body h3{font:400 1.45rem/1.3 Georgia,serif;color:#2C2623;margin:8px 0 10px}.student-elective-card-body p{font-size:.9rem;line-height:1.7;color:#776A61}.elective-card-meta{margin-top:auto;padding-top:15px;border-top:1px solid #F0E7DE;display:flex;justify-content:space-between;gap:10px;color:#6D5E53;font-size:.85rem}.elective-card-meta strong{color:#42362F}.student-view-note{background:#F1E4D5;padding:15px 18px;border-radius:10px;color:#66564A;margin:22px 0;font-size:.88rem}.student-view-empty{display:none;text-align:center;background:#fff;border:1px dashed #DCCBB9;border-radius:14px;padding:45px 20px;color:#776A61}.student-view-empty.show{display:block}.student-view-bottom{margin-top:35px;padding:28px 30px;border-radius:16px;background:#EFE1D0;display:flex;align-items:center;justify-content:space-between;gap:20px}.student-view-bottom h2{font:400 1.7rem Georgia,serif;margin:5px 0}.student-view-bottom p{margin:0;color:#76675B}.student-view-bottom .btn{background:#4A231A;color:white;border-radius:9px;padding:11px 16px;white-space:nowrap}.student-view-bottom .btn:hover{background:#855E4E}@media(max-width:1000px){.student-elective-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}@media(max-width:700px){.catalogue-intro{padding:25px;}.intro-mark{display:none}.catalogue-tools{grid-template-columns:1fr}.student-elective-grid{grid-template-columns:1fr}.student-view-bottom{align-items:flex-start;flex-direction:column}}
+    </style>
 </head>
-
-<body class="electives-page">
-
-    <nav class="navbar navbar-expand-lg electra-navbar">
-        <div class="container">
-            <a class="navbar-brand electra-brand" href="dashboard.jsp">
-                <span class="brand-symbol">E.</span> Electra
-            </a>
-
-            <button class="navbar-toggler" type="button"
-                    data-bs-toggle="collapse" data-bs-target="#mainNavbar"
-                    aria-controls="mainNavbar" aria-expanded="false"
-                    aria-label="Toggle navigation">
-                <span class="navbar-toggler-icon"></span>
-            </button>
-
-            <div class="collapse navbar-collapse" id="mainNavbar">
-                <ul class="navbar-nav ms-auto align-items-lg-center gap-lg-3">
-                    <li class="nav-item">
-                        <a class="nav-link" href="dashboard.jsp">Dashboard</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link active" href="electives.jsp">Electives</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="preferences.jsp">My Preferences</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="allocation-results.jsp">Results</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="btn btn-electra" href="profile.jsp">My Profile</a>
-                    </li>
-                </ul>
-            </div>
-        </div>
-    </nav>
-
-    <main class="container electives-container">
-
-        <section class="electives-hero">
-            <div class="hero-copy">
-                <span class="eyebrow">YOUR ACADEMIC JOURNEY</span>
-                <h1>Choose what <em>moves you.</em></h1>
-                <p>
-                    Explore your departmental electives, discover new areas
-                    of technology, and find the subjects that align with
-                    your interests and future goals.
-                </p>
-            </div>
-
-            <div class="hero-decoration" aria-hidden="true">
-                <span class="decoration-circle circle-one"></span>
-                <span class="decoration-circle circle-two"></span>
-                <div class="hero-monogram">E</div>
-                <span class="decoration-label">LEARN · EXPLORE · GROW</span>
-            </div>
-        </section>
-
-        <section class="catalogue-section">
-            <div class="section-heading">
-                <div>
-                    <span class="eyebrow">THE CATALOGUE</span>
-                    <h2>Explore electives</h2>
-                    <p>Find a subject that fits your ambitions.</p>
-                </div>
-
-                <span class="catalogue-count" id="electiveCount">
-                    6 electives
-                </span>
-            </div>
-
-            <div class="filter-panel">
-                <div class="search-wrapper">
-                    <label for="searchInput" class="form-label">Search electives</label>
-                    <input
-                        type="search"
-                        id="searchInput"
-                        class="form-control"
-                        placeholder="Search by name, code or topic..."
-                    >
-                </div>
-
-                <div class="filter-wrapper">
-                    <label for="departmentFilter" class="form-label">Category</label>
-                    <select id="departmentFilter" class="form-select">
-                        <option value="all">All categories</option>
-                        <option value="AI & Data">AI &amp; Data</option>
-                        <option value="Software">Software</option>
-                        <option value="Networks">Networks</option>
-                        <option value="Security">Security</option>
-                    </select>
-                </div>
-            </div>
-
-            <div class="catalogue-note">
-                <span class="note-icon">i</span>
-                <p>
-                    These are demonstration electives. Actual subjects,
-                    eligibility, seat availability and faculty details
-                    will be configured by the administrator.
-                </p>
-            </div>
-
-            <div class="row g-4" id="electiveGrid">
-                <!-- Elective cards are rendered by electives.js -->
-            </div>
-
-            <div id="emptyState" class="empty-state" hidden>
-                <div class="empty-icon">⌕</div>
-                <h3>No electives found</h3>
-                <p>Try another keyword or choose a different category.</p>
-                <button type="button" class="btn btn-electra" id="clearFilters">
-                    Clear filters
-                </button>
-            </div>
-        </section>
-
-        <section class="preference-banner">
-            <div>
-                <span class="eyebrow">READY TO DECIDE?</span>
-                <h2>Your next step starts with a choice.</h2>
-                <p>Explore your options before ranking your preferences.</p>
-            </div>
-
-            <a href="preferences.jsp" class="btn btn-light banner-button">
-                View Preferences <span aria-hidden="true">→</span>
-            </a>
-        </section>
-
-    </main>
-
-    <footer class="electra-footer">
-        <div class="container">
-            <span>Electra</span>
-            <p>The Right Choice. The Right Future.</p>
-            <small>Departmental Elective Allocation System</small>
-        </div>
-    </footer>
-
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="assets/js/electives.js"></script>
-</body>
-</html>
+<body data-user-id="${sessionScope.userId}" data-role="${sessionScope.role}">
+<div class="app-layout">
+<jsp:include page="/WEB-INF/partials/sidebar.jsp">
+    <jsp:param name="active" value="electives"/>
+</jsp:include>
+<main class="main-content"><header class="topbar"><div><div class="topbar-label">Academic Workspace</div><div class="topbar-title">Student View</div></div><div class="topbar-right"><span class="status-dot"></span><span class="academic-year">Academic Year 2026–27</span></div></header>
+<section class="page-content student-view-content">
+<section class="catalogue-intro"><div><span class="eyebrow">YOUR ACADEMIC JOURNEY</span><h1>Explore what <em>moves you.</em></h1><p>Discover departmental electives, compare subject areas, and find options that align with your interests and future goals.</p></div><div class="intro-mark" aria-hidden="true">E</div></section>
+<div class="section-heading"><div><h2>Elective Catalogue</h2><p>Browse the subjects available for this academic year.</p></div><span class="catalogue-count" id="electiveCount">0 electives</span></div>
+<div class="catalogue-tools"><div><label for="searchInput">Search electives</label><input id="searchInput" type="search" class="form-control" placeholder="Search by name, code, or topic..."></div><div><label for="departmentFilter">Category</label><select id="departmentFilter" class="form-select"><option value="all">All categories</option><option value="Professional Elective">Professional Elective</option><option value="Departmental">Departmental</option><option value="Open Elective">Open Elective</option><option value="AI & Data">AI &amp; Data</option><option value="Software">Software</option><option value="Networks">Networks</option><option value="Security">Security</option></select></div></div>
+<div class="student-view-note"><strong>Note:</strong> Elective information shown here is based on the catalogue available in this browser. Check with your department for official eligibility and seat confirmation.</div>
+<div id="electiveGrid" class="student-elective-grid" aria-live="polite"></div><div id="emptyState" class="student-view-empty"><h3>No electives found</h3><p>Try another keyword or select a different category.</p><button id="clearFilters" class="btn btn-outline-secondary" type="button">Clear filters</button></div>
+<section class="student-view-bottom"><div><span class="eyebrow">READY TO DECIDE?</span><h2>Your next step starts with a choice.</h2><p>Once you have explored the catalogue, arrange your preferences in order.</p></div><a href="preferences.jsp" class="btn">Rank My Preferences <span aria-hidden="true">→</span></a></section>
+<footer class="page-footer"><span>Electra</span> · Departmental Elective Allocation System <span class="footer-year">2026–27</span></footer>
+</section></main></div>
+<script src="assets/js/electives.js"></script>
+</body></html>

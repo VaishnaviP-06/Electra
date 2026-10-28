@@ -1,6 +1,4 @@
-/* ==========================================================
-   ELECTRA LOGIN PAGE INTERACTIONS
-   ========================================================== */
+/* ========================================================== ELECTRA LOGIN PAGE INTERACTIONS ========================================================== */
 document.addEventListener('DOMContentLoaded', function () {
     const loginForm = document.getElementById('loginForm');
     const passwordInput = document.getElementById('password');
@@ -13,9 +11,7 @@ document.addEventListener('DOMContentLoaded', function () {
     const passwordError = document.getElementById('passwordError');
     const STUDENT_EMAIL_DOMAIN = '@student.sfit.ac.in';
     const ADMIN_EMAIL_DOMAIN = '@sfit.ac.in';
-    /*
-     * STUDENT / ADMIN ROLE SWITCHING
-     */
+    /* * STUDENT / ADMIN ROLE SWITCHING */
     window.switchRole = function (role) {
         const roleInput = document.getElementById('role');
         const studentBtn = document.getElementById('studentBtn');
@@ -49,9 +45,7 @@ document.addEventListener('DOMContentLoaded', function () {
             : 'Access administrative tools to manage elective forms, seat capacity and allocation results.';
         clearMessage();
     };
-    /*
-     * SHOW / HIDE PASSWORD
-     */
+    /* * SHOW / HIDE PASSWORD */
     if (togglePassword && passwordInput) {
         togglePassword.addEventListener('click', function () {
             const shouldShow = passwordInput.type === 'password';
@@ -63,9 +57,7 @@ document.addEventListener('DOMContentLoaded', function () {
             );
         });
     }
-    /*
-    * FORM VALIDATION WITH INLINE ERRORS
-    */
+    /* * FORM VALIDATION WITH INLINE ERRORS */
     if (loginForm) {
         loginForm.addEventListener('submit', function (event) {
             const role = document.getElementById('role').value;
@@ -113,15 +105,6 @@ document.addEventListener('DOMContentLoaded', function () {
                     passwordInput.focus();
                 }
                 hasError = true;
-            } else if (password.length !== 6) {
-                setFieldError(
-                    passwordError,
-                    'Password must be exactly 6 characters long.'
-                );
-                if (!hasError) {
-                    passwordInput.focus();
-                }
-                hasError = true;
             }
             // Prevent submission if any validation fails.
             if (hasError) {
@@ -133,9 +116,7 @@ document.addEventListener('DOMContentLoaded', function () {
             // Valid submissions continue to the existing login servlet.
         });
     }
-    /*
-    * INLINE ERROR HELPERS
-    */
+    /* * INLINE ERROR HELPERS */
     function setFieldError(element, message) {
         if (element) {
             element.textContent = message;
@@ -152,9 +133,7 @@ document.addEventListener('DOMContentLoaded', function () {
             passwordError.style.display = 'none';
         }
     }
-    /*
-     * FORGOT PASSWORD MODAL
-     */
+    /* * FORGOT PASSWORD MODAL */
     function openForgotModal() {
         if (!forgotModal) {
             return;
@@ -200,9 +179,7 @@ document.addEventListener('DOMContentLoaded', function () {
             hideForgotModal();
         }
     });
-    /*
-     * DISPLAY VALIDATION MESSAGES
-     */
+    /* * DISPLAY VALIDATION MESSAGES */
     function showMessage(message, type) {
         if (!loginMessage) {
             return;
@@ -217,8 +194,6 @@ document.addEventListener('DOMContentLoaded', function () {
         loginMessage.textContent = '';
         loginMessage.className = 'alert mt-3 d-none';
     }
-    /*
-     * INITIALIZE THE DEFAULT STUDENT ROLE
-     */
+    /* * INITIALIZE THE DEFAULT STUDENT ROLE */
     window.switchRole('student');
 });

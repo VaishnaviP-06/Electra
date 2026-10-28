@@ -1,23 +1,29 @@
-
 document.addEventListener("DOMContentLoaded", function () {
+    // ==========================================
+    // DOM ELEMENTS
+    // ==========================================
     const electiveForm = document.getElementById("electiveForm");
     const electiveTableBody = document.getElementById("electiveTableBody");
-    const studentTableBody = document.getElementById("studentTableBody");
     const messageBox = document.getElementById("adminMessage");
-
+    const totalElectivesElement = document.getElementById("totalElectives");
+    const totalSeatsElement = document.getElementById("totalSeats");
+    const resetButton = document.getElementById("resetDemoData");
+    const exportButton = document.getElementById("exportElectivesXml");
     const electiveStorageKey = "electraAdminElectives";
-    const profileStorageKey = "electraStudentProfile";
-
-    // Load the default electives from electives.js.
+    // ==========================================
+    // DEFAULT DEMO ELECTIVES
+    // ==========================================
     function getInitialElectives() {
+        // Use the defaults from electives.js when available.
         if (
             typeof electraDefaultElectives !== "undefined" &&
             Array.isArray(electraDefaultElectives)
         ) {
-            return electraDefaultElectives.map(item => ({ ...item }));
+            return electraDefaultElectives.map(function (item) {
+                return { ...item };
+            });
         }
-
-        // Fallback in case electives.js is unavailable.
+        // Fallback if electives.js is unavailable.
         return [
             {
                 id: "1",
@@ -61,34 +67,37 @@ document.addEventListener("DOMContentLoaded", function () {
             }
         ];
     }
-
-    // Display messages on the admin page.
+    // ==========================================
+    // MESSAGE DISPLAY
+    // ==========================================
     function showMessage(message, type) {
+        if (!messageBox) {
+            console[type === "danger" ? "error" : "log"](message);
+            return;
+        }
         messageBox.textContent = message;
-        messageBox.className = "alert alert-" + type;
+        messageBox.className =
+            "alert mt-4 alert-" + type;
+        messageBox.setAttribute("role", "alert");
     }
-
-    // Load electives from browser storage.
+    // ==========================================
+    // LOAD ELECTIVES FROM LOCAL STORAGE
+    // ==========================================
     function loadElectives() {
         try {
             const saved = localStorage.getItem(electiveStorageKey);
-
             if (saved !== null) {
                 const parsed = JSON.parse(saved);
-
                 if (Array.isArray(parsed)) {
                     return parsed;
                 }
-
-                throw new Error("Invalid elective data");
+                throw new Error("Invalid elective data.");
             }
-
             const initial = getInitialElectives();
             localStorage.setItem(
                 electiveStorageKey,
                 JSON.stringify(initial)
             );
-
             return initial;
         } catch (error) {
             console.error("Unable to load electives:", error);
@@ -96,21 +105,19 @@ document.addEventListener("DOMContentLoaded", function () {
                 "Unable to load elective data from browser storage.",
                 "danger"
             );
-
             return getInitialElectives();
         }
     }
-
     let managedElectives = loadElectives();
-
-    // Save the current elective list.
+    // ==========================================
+    // SAVE ELECTIVES
+    // ==========================================
     function saveElectives() {
         try {
             localStorage.setItem(
                 electiveStorageKey,
                 JSON.stringify(managedElectives)
             );
-
             return true;
         } catch (error) {
             console.error("Unable to save electives:", error);
@@ -118,271 +125,210 @@ document.addEventListener("DOMContentLoaded", function () {
                 "Unable to save electives in browser storage.",
                 "danger"
             );
-
             return false;
         }
     }
-
-    // Update dashboard statistics.
+    // ==========================================
+    // UPDATE SUMMARY STATISTICS
+    // ==========================================
     function updateStatistics() {
-        document.getElementById("totalElectives").textContent =
-            managedElectives.length;
-
-        const totalSeats = managedElectives.reduce(function (total, item) {
-            return total + (Number(item.seats) || 0);
-        }, 0);
-
-        document.getElementById("totalSeats").textContent = totalSeats;
-
-        let studentCount = 0;
-
-        try {
-            if (localStorage.getItem(profileStorageKey)) {
-                studentCount = 1;
-            }
-        } catch (error) {
-            studentCount = 0;
+        if (totalElectivesElement) {
+            totalElectivesElement.textContent =
+                managedElectives.length;
         }
-
-        document.getElementById("totalStudents").textContent =
-            studentCount;
+        const totalSeats = managedElectives.reduce(
+            function (total, item) {
+                return total + (Number(item.seats) || 0);
+            },
+            0
+        );
+        if (totalSeatsElement) {
+            totalSeatsElement.textContent = totalSeats;
+        }
     }
-
-    // Display all electives in the table.
+    // ==========================================
+    // RENDER ELECTIVE TABLE
+    // ==========================================
     function renderElectives() {
+        if (!electiveTableBody) {
+            console.error("Elective table body was not found.");
+            return;
+        }
         electiveTableBody.replaceChildren();
-
+        // Empty state.
         if (managedElectives.length === 0) {
             const row = document.createElement("tr");
             const cell = document.createElement("td");
-
             cell.colSpan = 5;
-            cell.className = "text-center text-muted";
+            cell.className = "text-center text-muted py-4";
             cell.textContent =
                 "No electives available. Add one using the form above.";
-
             row.appendChild(cell);
             electiveTableBody.appendChild(row);
-
             updateStatistics();
             return;
         }
-
         managedElectives.forEach(function (item) {
             const row = document.createElement("tr");
-
-            [
-                item.code,
-                item.name,
-                item.category,
-                String(item.seats)
-            ].forEach(function (value) {
+            // Elective information cells.
+            const values = [
+                item.code ?? "—",
+                item.name ?? "—",
+                item.category ?? "—",
+                String(item.seats ?? 0)
+            ];
+            values.forEach(function (value) {
                 const cell = document.createElement("td");
-                cell.textContent = value;
+                // textContent prevents HTML from being interpreted.
+                cell.textContent = String(value);
                 row.appendChild(cell);
             });
-
+            // Action cell.
             const actionCell = document.createElement("td");
             const removeButton = document.createElement("button");
-
             removeButton.type = "button";
             removeButton.className = "admin-remove-btn";
             removeButton.textContent = "Remove";
             removeButton.setAttribute(
                 "aria-label",
-                "Remove elective " + item.code
+                "Remove elective " + String(item.code ?? "")
             );
-
             removeButton.addEventListener("click", function () {
                 const confirmed = window.confirm(
-                    "Remove " + item.name + " from the admin demo list?"
+                    "Remove " +
+                    String(item.name ?? item.code ?? "this elective") +
+                    " from the admin demo list?"
                 );
-
                 if (!confirmed) {
                     return;
                 }
-
                 const previousElectives = managedElectives;
-
-                managedElectives = managedElectives.filter(function (elective) {
-                    return String(elective.id) !== String(item.id);
-                });
-
+                managedElectives = managedElectives.filter(
+                    function (elective) {
+                        return String(elective.id) !== String(item.id);
+                    }
+                );
                 if (!saveElectives()) {
                     managedElectives = previousElectives;
                     return;
                 }
-
                 renderElectives();
-
                 showMessage(
                     "Elective removed from the admin demo list.",
                     "success"
                 );
             });
-
             actionCell.appendChild(removeButton);
             row.appendChild(actionCell);
             electiveTableBody.appendChild(row);
         });
-
         updateStatistics();
     }
-
-    // Display the saved student profile.
-    function renderStudentProfile() {
-        studentTableBody.replaceChildren();
-
-        let profile = null;
-
-        try {
-            const savedProfile = localStorage.getItem(profileStorageKey);
-            profile = savedProfile ? JSON.parse(savedProfile) : null;
-        } catch (error) {
-            console.error("Unable to load student profile:", error);
-        }
-
-        if (!profile || typeof profile !== "object") {
-            const row = document.createElement("tr");
-            const cell = document.createElement("td");
-
-            cell.colSpan = 5;
-            cell.className = "text-center text-muted";
-            cell.textContent =
-                "No saved profile found. Save a profile from the student page.";
-
-            row.appendChild(cell);
-            studentTableBody.appendChild(row);
-
-            updateStatistics();
-            return;
-        }
-
-        const row = document.createElement("tr");
-
-        [
-            profile.name || "—",
-            profile.roll || "—",
-            profile.department || "—",
-            profile.year || "—",
-            profile.cgpa ?? "—"
-        ].forEach(function (value) {
-            const cell = document.createElement("td");
-            cell.textContent = String(value);
-            row.appendChild(cell);
+    // ==========================================
+    // ADD NEW ELECTIVE
+    // ==========================================
+    if (electiveForm) {
+        electiveForm.addEventListener("submit", function (event) {
+            event.preventDefault();
+            const code = document.getElementById("electiveCode")
+                .value.trim()
+                .toUpperCase();
+            const name = document.getElementById("electiveName")
+                .value.trim();
+            const category = document.getElementById("electiveCategory")
+                .value;
+            const seats = Number(
+                document.getElementById("electiveSeats").value
+            );
+            const description =
+                document.getElementById("electiveDescription")
+                    .value.trim();
+            // Required fields.
+            if (!code || !name || !category) {
+                showMessage(
+                    "Please complete all required elective fields.",
+                    "danger"
+                );
+                return;
+            }
+            // Seat validation.
+            if (
+                !Number.isInteger(seats) ||
+                seats < 1 ||
+                seats > 500
+            ) {
+                showMessage(
+                    "Seats must be a whole number between 1 and 500.",
+                    "danger"
+                );
+                return;
+            }
+            // Duplicate elective-code validation.
+            const duplicate = managedElectives.some(
+                function (item) {
+                    return String(item.code ?? "").toUpperCase() === code;
+                }
+            );
+            if (duplicate) {
+                showMessage(
+                    "An elective with this code already exists.",
+                    "warning"
+                );
+                return;
+            }
+            // Create elective object.
+            const newElective = {
+                id: String(Date.now()),
+                code: code,
+                name: name,
+                category: category,
+                seats: seats,
+                description: description
+            };
+            managedElectives.push(newElective);
+            // Roll back the change if saving fails.
+            if (!saveElectives()) {
+                managedElectives.pop();
+                return;
+            }
+            renderElectives();
+            electiveForm.reset();
+            document.getElementById("electiveSeats").value = 30;
+            showMessage(
+                "Elective added successfully to the admin demo list.",
+                "success"
+            );
         });
-
-        studentTableBody.appendChild(row);
-        updateStatistics();
     }
-
-    // Add a new elective.
-    electiveForm.addEventListener("submit", function (event) {
-        event.preventDefault();
-
-        const code = document.getElementById("electiveCode")
-            .value.trim().toUpperCase();
-
-        const name = document.getElementById("electiveName")
-            .value.trim();
-
-        const category = document.getElementById("electiveCategory").value;
-
-        const seats = Number(
-            document.getElementById("electiveSeats").value
-        );
-
-        const description = document.getElementById("electiveDescription")
-            .value.trim();
-
-        if (!code || !name || !category) {
-            showMessage(
-                "Please complete all required elective fields.",
-                "danger"
-            );
-            return;
-        }
-
-        if (!Number.isInteger(seats) || seats < 1 || seats > 500) {
-            showMessage(
-                "Seats must be a whole number between 1 and 500.",
-                "danger"
-            );
-            return;
-        }
-
-        const duplicate = managedElectives.some(function (item) {
-            return item.code.toUpperCase() === code;
-        });
-
-        if (duplicate) {
-            showMessage(
-                "An elective with this code already exists.",
-                "warning"
-            );
-            return;
-        }
-
-        const newElective = {
-            id: String(Date.now()),
-            code: code,
-            name: name,
-            category: category,
-            seats: seats,
-            description: description
-        };
-
-        managedElectives.push(newElective);
-
-        if (!saveElectives()) {
-            managedElectives.pop();
-            return;
-        }
-
-        renderElectives();
-        electiveForm.reset();
-
-        document.getElementById("electiveSeats").value = 30;
-
-        showMessage(
-            "Elective added successfully to the admin demo list.",
-            "success"
-        );
-    });
-
-    // Reset electives to the original five defaults.
-    document.getElementById("resetDemoData").addEventListener(
-        "click",
-        function () {
+    // ==========================================
+    // RESET DEMO ELECTIVES
+    // ==========================================
+    if (resetButton) {
+        resetButton.addEventListener("click", function () {
             const confirmed = window.confirm(
                 "Reset the admin elective list to its original demo data? " +
                 "Any electives you added will be removed."
             );
-
             if (!confirmed) {
                 return;
             }
-
             const previousElectives = managedElectives;
-
-            // Corrected line: restore the original default list.
             managedElectives = getInitialElectives();
-
+            // Restore the previous list if saving fails.
             if (!saveElectives()) {
                 managedElectives = previousElectives;
                 return;
             }
-
             renderElectives();
-
             showMessage(
                 "Admin demo electives have been reset to the original defaults.",
                 "success"
             );
-        }
-    );
-
-    // Escape XML special characters.
+        });
+    }
+    // ==========================================
+    // XML ESCAPING
+    // ==========================================
     function escapeXml(value) {
         return String(value ?? "")
             .replace(/&/g, "&amp;")
@@ -391,56 +337,65 @@ document.addEventListener("DOMContentLoaded", function () {
             .replace(/"/g, "&quot;")
             .replace(/'/g, "&apos;");
     }
-
-    // Export the elective list to an XML file.
-    const exportButton = document.getElementById("exportElectivesXml");
-
+    // ==========================================
+    // EXPORT ELECTIVES TO XML
+    // ==========================================
     if (exportButton) {
         exportButton.addEventListener("click", function () {
             const xmlRows = managedElectives.map(function (item) {
                 return [
                     "    <elective>",
-                    "        <id>" + escapeXml(item.id) + "</id>",
-                    "        <code>" + escapeXml(item.code) + "</code>",
-                    "        <name>" + escapeXml(item.name) + "</name>",
-                    "        <category>" + escapeXml(item.category) + "</category>",
-                    "        <seats>" + escapeXml(item.seats) + "</seats>",
-                    "        <description>" + escapeXml(item.description) + "</description>",
+                    "        <id>" +
+                        escapeXml(item.id) +
+                        "</id>",
+                    "        <code>" +
+                        escapeXml(item.code) +
+                        "</code>",
+                    "        <name>" +
+                        escapeXml(item.name) +
+                        "</name>",
+                    "        <category>" +
+                        escapeXml(item.category) +
+                        "</category>",
+                    "        <seats>" +
+                        escapeXml(item.seats) +
+                        "</seats>",
+                    "        <description>" +
+                        escapeXml(item.description) +
+                        "</description>",
                     "    </elective>"
                 ].join("\n");
             }).join("\n");
-
             const xmlContent =
                 '<?xml version="1.0" encoding="UTF-8"?>\n' +
                 "<electives>\n" +
-                xmlRows + "\n" +
-                "</electives>";
-
+                xmlRows +
+                "\n</electives>";
             const blob = new Blob(
                 [xmlContent],
-                { type: "application/xml;charset=utf-8" }
+                {
+                    type: "application/xml;charset=utf-8"
+                }
             );
-
             const url = URL.createObjectURL(blob);
             const link = document.createElement("a");
-
             link.href = url;
             link.download = "electra-electives.xml";
-
             document.body.appendChild(link);
             link.click();
             link.remove();
-
-            URL.revokeObjectURL(url);
-
+            // Release the generated download URL.
+            window.setTimeout(function () {
+                URL.revokeObjectURL(url);
+            }, 1000);
             showMessage(
                 "Elective XML file exported successfully.",
                 "success"
             );
         });
     }
-
-    // Initial page rendering.
+    // ==========================================
+    // INITIAL PAGE RENDERING
+    // ==========================================
     renderElectives();
-    renderStudentProfile();
 });
