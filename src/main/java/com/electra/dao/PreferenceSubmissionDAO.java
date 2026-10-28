@@ -91,12 +91,13 @@ public class PreferenceSubmissionDAO {
     public boolean markSubmitted(long submissionId) throws SQLException {
 
         String sql = "UPDATE preference_submissions " +
-                     "SET submission_status = 'SUBMITTED' " +
-                     "WHERE submission_id = ? AND submission_status = 'DRAFT'" +
-                     "AND submission_status = 'DRAFT'";
+                    "SET submission_status = 'SUBMITTED', " +
+                    "submitted_at = CURRENT_TIMESTAMP " +
+                    "WHERE submission_id = ? " +
+                    "AND submission_status = 'DRAFT'";
 
         try (Connection conn = DBConnection.getConnection();
-             PreparedStatement stmt = conn.prepareStatement(sql)) {
+            PreparedStatement stmt = conn.prepareStatement(sql)) {
 
             stmt.setLong(1, submissionId);
             return stmt.executeUpdate() > 0;

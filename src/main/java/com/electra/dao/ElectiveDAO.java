@@ -93,7 +93,7 @@ public class ElectiveDAO {
     }
 
 
-    public boolean create(Elective elective) throws Exception {
+    public boolean create(Elective elective) throws SQLException {
         validate(elective);
 
         String sql = 
@@ -128,7 +128,7 @@ public class ElectiveDAO {
         }
     }
 
-    public boolean update(Elective elective) throws Exception {
+    public boolean update(Elective elective) throws SQLException {
         validate(elective);
 
         String sql = "UPDATE electives SET elective_code = ?,elective_name = ?,"
