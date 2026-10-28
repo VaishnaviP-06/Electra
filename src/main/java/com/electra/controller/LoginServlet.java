@@ -14,6 +14,7 @@ public class LoginServlet extends HttpServlet {
     private static final String DEMO_STUDENT_EMAIL = "student@student.sfit.ac.in";
     private static final String DEMO_ADMIN_EMAIL = "admin@sfit.ac.in";
     private static final String DEMO_PASSWORD = "ElectraDemo123";
+    private static final String DEMO_STUDENT_ROLL_NUMBER = "CE055";
 
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
@@ -41,6 +42,12 @@ public class LoginServlet extends HttpServlet {
         session.setAttribute("userId", email);
         session.setAttribute("username", studentMatch ? "Demo Student" : "Demo Administrator");
         session.setAttribute("role", role);
+        if (studentMatch) {
+            session.setAttribute(
+                "studentRollNumber",
+                DEMO_STUDENT_ROLL_NUMBER
+            );
+        }
         session.setMaxInactiveInterval(30 * 60);
         response.sendRedirect(request.getContextPath() + (adminMatch ? "/admin.jsp" : "/dashboard.jsp"));
     }
