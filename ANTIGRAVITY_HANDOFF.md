@@ -23,10 +23,7 @@
 #### Category 1: Fixed & Verified [VERIFIED IN SCHEMA & LOCAL CODEBASE]
 1. **Student Dashboard Connected to Database (Item 1)**:
    - Created `DashboardDAO.java` and `DashboardServlet.java` (`/dashboard`).
-   - Replaced static placeholder counts (`—`) in `dashboard.jsp` with live database metrics:
-     - Available active electives count (`SELECT COUNT(*) FROM electives WHERE is_active = 1`).
-     - Student completed preference submissions count (`SELECT COUNT(*) FROM preference_submissions WHERE student_id = ? AND submission_status = 'SUBMITTED'`).
-     - Dynamic allocation status respecting `results_published` privacy.
+   - Replaced static placeholder counts (`—`) in `dashboard.jsp` with live database metrics.
    - Student ID derived strictly from authenticated session (`session.getAttribute("studentId")`). Never accepts URL or request parameters to choose whose data to show.
 2. **Student Profile Read-Only & Session Scoped (Item 2)**:
    - Corrected `StudentProfileDAO` to query the real `students` table directly without assuming nonexistent `student_profile` table.
@@ -36,35 +33,43 @@
      - Displays official fields: Full Name, Roll Number, Email, Department, Batch/Cycle, and CGPA.
 3. **Admin Dashboard Real Database Metrics & Demo Notice Removed (Item 3)**:
    - Removed misleading "Demo Data Notice" banner and browser `localStorage` code from `admin.jsp`.
-   - Wired `DashboardDAO.getAdminDashboardData()` to query live database counts:
-     - Active electives in catalogue.
-     - Total seat capacity across active electives.
-     - Total registered students in `students` table.
-     - Total allocation forms in `allocation_forms` table.
+   - Wired `DashboardDAO.getAdminDashboardData()` to query live database counts.
    - Connected quick action navigation cards to `/admin-electives`, `/admin-students`, and `/admin-allocations`.
 4. **Admin Manage Students Schema Fix (Item 4)**:
-   - Root cause identified: Code was attempting to query table `electra_db.student_profile` which does not exist in the MySQL database. The real table is `students`.
-   - Fixed `StudentProfileDAO.findAllStudents()`, `findByStudentId()`, and `findByStudentRollNumber()` to query `students` table (`student_id`, `roll_number`, `student_name`, `email`, `batch_or_cycle`, `cgpa`).
-   - Corrected `admin-students.jsp` and `AdminStudentServlet.java` (`/admin-students`):
-     - Displays actual student directory with roll number, student name, email, batch/cycle, CGPA, and eligibility badge (CGPA >= 6.0).
-     - Error logging: Logs internal database exceptions server-side via `getServletContext().log(...)` and displays a user-friendly error notice without exposing SQL statements.
+   - Fixed `StudentProfileDAO.findAllStudents()`, `findByStudentId()`, and `findByStudentRollNumber()` to query `students` table.
+   - Corrected `admin-students.jsp` and `AdminStudentServlet.java` (`/admin-students`).
 5. **Admin Reports & XML Export Only (Item 5)**:
    - Implemented `ReportDAO.java`, `ReportServlet.java` (`/reports`, `/reports/export`), and `ReportRow.java`.
    - Generates well-formed XML with root `<electra-allocation-report>`, `<summary>`, and `<electives>` elements with escaped XML values.
-   - Sets `application/xml;charset=UTF-8` with attachment filename `electra_report_[filter]_[timestamp].xml`.
-   - Restricted export format strictly to XML (removed CSV/JSON/PDF alternatives).
-   - Read-only export protected by `ADMIN` role check in servlet and `AuthFilter`. Does not modify any allocation state.
+   - Restricted export format strictly to XML.
+6. **Real Database-Backed BCrypt Authentication & Authorization Engine (Phase 1)**:
+   - Implemented standard `com.electra.util.BCrypt` with standard `$2a$` salt and verification matching standard OpenBSD / Spring Security test vectors.
+   - Verified fail-closed security: malformed, corrupted, empty, or non-BCrypt placeholder hashes (`TEMPORARY_HASH_REPLACE_LATER`) fail closed returning `false`, preventing any HTTP 500 error and returning generic `"Invalid credentials or account inactive."`.
+   - Refactored `UserDAO`: Added `findStudentUserByIdentifier(identifier)` supporting student email, roll number, or username without changing schema.
+   - Enhanced `StudentProfileDAO`: Added `findByUserId(long userId)` to populate student profile from authenticated user account.
+   - Refactored `LoginServlet`:
+     - Removed all hardcoded credentials and demo fallback accounts.
+     - Authenticates against database records (`users` table with `is_active = 1`, BCrypt hash verification).
+     - Resolves user and student session attributes (`userId`, `username`, `userDbId`, `role`, `studentId`, `studentName`, `studentRollNumber`, `adminUserId`, `csrfToken`).
+     - Session fixation protection: invalidates prior session before binding new session.
+     - Returns generic error messages preventing account enumeration.
+   - Fixed `AuthFilter`:
+     - Mapped `/dashboard`, `/student/dashboard`, and `/admin/dashboard` in filter patterns.
+     - Preserved strict role-based separation: `/admin*` and `/reports*` restricted to `ADMIN`; `/profile`, `/preferences*`, `/allocation-results*` restricted to `STUDENT`; `/dashboard*` and `/electives*` accessible by authenticated users with respective role-based dashboard views.
+   - Updated UI & Password Policy:
+     - Enforced minimum 8 character password policy (max 72 chars for BCrypt).
+     - Removed rigid 6-character length restrictions in frontend and backend.
+     - Flexible input support for student email, roll number, or username.
 
-#### Category 2: Implemented & Integrated [PENDING VS CODE MAVEN BUILD & RUNTIME TEST]
-1. **VS Code Maven Packaging Check**:
-   - All classes (`DashboardDAO`, `DashboardServlet`, `ReportDAO`, `ReportServlet`, `ReportRow`, `AdminElectiveServlet`, `AdminStudentServlet`, `StudentAllocationServlet`, `StudentElectiveServlet`, `StudentPreferenceServlet`) are fully implemented and integrated.
-   - Requires compilation verification via the VS Code Maven extension.
-2. **Runtime Walkthrough on Tomcat**:
-   - Test login with student credentials and verify student dashboard & read-only profile.
-   - Test login with admin credentials and verify admin dashboard metrics, Manage Students table, and XML download.
+#### Category 2: Implemented & Integrated [PENDING VS CODE MAVEN BUILD & MANUAL MIGRATION]
+1. **Database Credential Migration**:
+   - Migration script prepared with transactions and row checks for the 4 target accounts (user IDs 1, 2, 3, 4).
+   - Awaiting manual execution by user.
+2. **VS Code Maven Packaging Check**:
+   - Build through VS Code Maven Extension UI (`clean package`).
 
 #### Category 3: Incomplete [NEXT PHASES]
-- Authentication overhaul (salted password hashing, registration, password validation) - intentionally deferred to subsequent phase per instructions.
+- Full self-registration / password reset features (if planned for future phases).
 
 #### Category 4: Blocked [BLOCKED]
 - None.
@@ -81,5 +86,5 @@
 ---
 
 ## 4. Current Stopping Point & Next Action
-- **Current Stopping Point**: Completed all 5 priority dashboard, profile, student management, and XML report fixes.
-- **Next Action**: Request user to run `clean` and `package` from the VS Code Maven Extension interface and share the build result.
+- **Current Stopping Point**: Code changes implemented, fail-closed handling verified, test vectors validated against Spring/OpenBSD standard, and exact transaction-safe migration SQL prepared.
+- **Next Action**: User manually reviews and executes the migration SQL, then runs `clean package` in the VS Code Maven extension.

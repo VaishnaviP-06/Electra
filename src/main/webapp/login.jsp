@@ -134,11 +134,11 @@
                             ✉
                         </span>
                         <input
-                            type="email"
+                            type="text"
                             id="userId"
                             name="userId"
                             class="form-control"
-                            placeholder="Enter your student email ID"
+                            placeholder="Enter your student identifier"
                             autocomplete="username"
                             required>
                         <div

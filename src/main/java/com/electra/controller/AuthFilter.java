@@ -15,7 +15,10 @@ import java.util.Set;
 import java.util.UUID;
 
 @WebFilter(urlPatterns = {
+    "/dashboard",
     "/dashboard.jsp",
+    "/student/dashboard",
+    "/admin/dashboard",
     "/profile",
     "/preferences.jsp",
     "/preferences",
@@ -38,9 +41,10 @@ import java.util.UUID;
 })
 public class AuthFilter implements Filter {
 
-    // Pages and endpoints accessible only to administrators.
+    // Endpoints accessible only to administrators.
     private static final Set<String> ADMIN_PATHS = Set.of(
         "/admin.jsp",
+        "/admin/dashboard",
         "/admin-electives.jsp",
         "/admin-electives",
         "/admin-students.jsp",
@@ -49,8 +53,18 @@ public class AuthFilter implements Filter {
         "/admin-allocations",
         "/admin/allocation",
         "/reports.jsp",
-    "/reports",
-    "/reports/export"
+        "/reports",
+        "/reports/export"
+    );
+
+    // Endpoints accessible only to students.
+    private static final Set<String> STUDENT_PATHS = Set.of(
+        "/student/dashboard",
+        "/profile",
+        "/preferences.jsp",
+        "/preferences",
+        "/allocation-results.jsp",
+        "/allocation-results"
     );
 
     @Override
@@ -71,7 +85,7 @@ public class AuthFilter implements Filter {
 
         String path = request.getServletPath();
 
-        // 1. Redirect users who are not logged in.
+        // 1. Redirect unauthenticated users to login page
         if (role == null) {
             response.sendRedirect(
                 request.getContextPath() + "/login.jsp"
@@ -84,9 +98,8 @@ public class AuthFilter implements Filter {
             session.setAttribute("csrfToken", UUID.randomUUID().toString());
         }
 
-        // 2. Only administrators can access admin-only pages and endpoints.
+        // 2. Administrator-only routes
         if (ADMIN_PATHS.contains(path)) {
-
             if (!"ADMIN".equals(role)) {
                 response.sendError(
                     HttpServletResponse.SC_FORBIDDEN,
@@ -96,12 +109,26 @@ public class AuthFilter implements Filter {
             }
         }
 
-        // 3. Both students and administrators can access Dashboard.
-        else if ("/dashboard.jsp".equals(path)) {
+        // 3. Student-only routes
+        else if (STUDENT_PATHS.contains(path)) {
+            if (!"STUDENT".equals(role)) {
+                response.sendError(
+                    HttpServletResponse.SC_FORBIDDEN,
+                    "Student access required."
+                );
+                return;
+            }
+        }
 
-            if (!"STUDENT".equals(role)
-                    && !"ADMIN".equals(role)) {
+        // 4. Shared routes accessible to both authenticated roles:
+        // /dashboard, /dashboard.jsp, /electives, /electives.jsp, /elective-details.jsp
+        else if ("/dashboard".equals(path)
+                || "/dashboard.jsp".equals(path)
+                || "/electives".equals(path)
+                || "/electives.jsp".equals(path)
+                || "/elective-details.jsp".equals(path)) {
 
+            if (!"STUDENT".equals(role) && !"ADMIN".equals(role)) {
                 response.sendError(
                     HttpServletResponse.SC_FORBIDDEN,
                     "Invalid user role."
@@ -110,26 +137,11 @@ public class AuthFilter implements Filter {
             }
         }
 
-        // 4. Both students and administrators can view electives.
-        else if ("/electives.jsp".equals(path) || "/electives".equals(path) || "/elective-details.jsp".equals(path)) {
-
-            if (!"STUDENT".equals(role)
-                    && !"ADMIN".equals(role)) {
-
-                response.sendError(
-                    HttpServletResponse.SC_FORBIDDEN,
-                    "Invalid user role."
-                );
-                return;
-            }
-        }
-
-        // 5. Other protected pages are student-only.
-        else if (!"STUDENT".equals(role)) {
-
+        // 5. Default denial for unrecognized routes matched by filter
+        else if (!"STUDENT".equals(role) && !"ADMIN".equals(role)) {
             response.sendError(
                 HttpServletResponse.SC_FORBIDDEN,
-                "Student access required."
+                "Access denied."
             );
             return;
         }

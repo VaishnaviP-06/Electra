@@ -71,6 +71,26 @@ public class StudentProfileDAO {
         }
     }
 
+    public StudentProfile findByUserId(long userId) throws SQLException {
+        String sql =
+            "SELECT student_id, student_name AS full_name, email, roll_number, "
+            + "batch_or_cycle, cgpa "
+            + "FROM students "
+            + "WHERE user_id = ?";
+
+        try (Connection connection = DBConnection.getConnection();
+             PreparedStatement statement = connection.prepareStatement(sql)) {
+            statement.setLong(1, userId);
+
+            try (ResultSet rs = statement.executeQuery()) {
+                if (!rs.next()) {
+                    return null;
+                }
+                return mapStudentRow(rs);
+            }
+        }
+    }
+
     private StudentProfile mapStudentRow(ResultSet rs) throws SQLException {
         StudentProfile profile = new StudentProfile();
         profile.setStudentId(rs.getLong("student_id"));

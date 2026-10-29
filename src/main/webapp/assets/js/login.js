@@ -9,8 +9,7 @@ document.addEventListener('DOMContentLoaded', function () {
     const closeForgotModal = document.getElementById('closeForgotModal');
     const userIdError = document.getElementById('userIdError');
     const passwordError = document.getElementById('passwordError');
-    const STUDENT_EMAIL_DOMAIN = '@student.sfit.ac.in';
-    const ADMIN_EMAIL_DOMAIN = '@sfit.ac.in';
+
     /* * STUDENT / ADMIN ROLE SWITCHING */
     window.switchRole = function (role) {
         const roleInput = document.getElementById('role');
@@ -21,30 +20,35 @@ document.addEventListener('DOMContentLoaded', function () {
         const subtitle = document.getElementById('cardSubtitle');
         const emailHint = document.getElementById('emailHint');
         const isStudent = role === 'student';
+
         roleInput.value = role;
         studentBtn.classList.toggle('active', isStudent);
         adminBtn.classList.toggle('active', !isStudent);
         studentBtn.setAttribute('aria-pressed', String(isStudent));
         adminBtn.setAttribute('aria-pressed', String(!isStudent));
-        // Update the user ID label.
+
+        // Update the user ID label and input details
         idLabel.innerHTML = isStudent
-            ? 'Student Email ID <span>*</span>'
-            : 'Administrator Email ID <span>*</span>';
-        // Update the input type and placeholder.
-        userId.type = isStudent ? 'email' : 'text';
+            ? 'Student Identifier <span>*</span>'
+            : 'Administrator Username <span>*</span>';
+
+        userId.type = 'text';
         userId.placeholder = isStudent
-            ? 'Enter your student email ID'
-            : 'Enter your administrator email ID';
-        // Show the domain hint only for students.
+            ? 'Enter email, roll number, or username'
+            : 'Enter administrator username';
+
         if (emailHint) {
             emailHint.style.display = isStudent ? '' : 'none';
         }
-        // Update the form description.
+
         subtitle.textContent = isStudent
             ? 'Access your academic portal and manage your elective preferences, submissions and results.'
             : 'Access administrative tools to manage elective forms, seat capacity and allocation results.';
+
+        clearFieldErrors();
         clearMessage();
     };
+
     /* * SHOW / HIDE PASSWORD */
     if (togglePassword && passwordInput) {
         togglePassword.addEventListener('click', function () {
@@ -57,65 +61,54 @@ document.addEventListener('DOMContentLoaded', function () {
             );
         });
     }
+
     /* * FORM VALIDATION WITH INLINE ERRORS */
     if (loginForm) {
         loginForm.addEventListener('submit', function (event) {
-            const role = document.getElementById('role').value;
             const userIdInput = document.getElementById('userId');
-            const userId = userIdInput.value.trim().toLowerCase();
+            const identifier = userIdInput.value.trim();
             const password = passwordInput.value;
-            // Clear previous inline errors.
+
             clearFieldErrors();
             clearMessage();
             let hasError = false;
-            // Validate email / login ID.
-            if (!userId) {
-                setFieldError(userIdError, 'Please enter your email address.');
+
+            if (!identifier) {
+                setFieldError(userIdError, 'Please enter your login identifier.');
                 userIdInput.focus();
                 hasError = true;
-            } else if (role === 'student') {
-                if (
-                    !userId.endsWith(STUDENT_EMAIL_DOMAIN) ||
-                    userId.length === STUDENT_EMAIL_DOMAIN.length
-                ) {
-                    setFieldError(
-                        userIdError,
-                        'Enter a valid student email ending in @student.sfit.ac.in.'
-                    );
-                    userIdInput.focus();
-                    hasError = true;
-                }
-            } else if (role === 'admin') {
-                if (
-                    !userId.endsWith(ADMIN_EMAIL_DOMAIN) ||
-                    userId.length === ADMIN_EMAIL_DOMAIN.length
-                ) {
-                    setFieldError(
-                        userIdError,
-                        'Enter a valid administrator email ending in @sfit.ac.in.'
-                    );
-                    userIdInput.focus();
-                    hasError = true;
-                }
             }
-            // Validate password.
-            if (!password.trim()) {
+
+            // Simple password policy: at least 8 characters
+            if (!password) {
                 setFieldError(passwordError, 'Please enter your password.');
                 if (!hasError) {
                     passwordInput.focus();
                 }
                 hasError = true;
+            } else if (password.length < 8) {
+                setFieldError(passwordError, 'Password must be at least 8 characters long.');
+                if (!hasError) {
+                    passwordInput.focus();
+                }
+                hasError = true;
+            } else if (password.length > 72) {
+                setFieldError(passwordError, 'Password cannot exceed 72 characters.');
+                if (!hasError) {
+                    passwordInput.focus();
+                }
+                hasError = true;
             }
-            // Prevent submission if any validation fails.
+
             if (hasError) {
                 event.preventDefault();
                 return;
             }
-            // Submit the normalized email.
-            userIdInput.value = userId;
-            // Valid submissions continue to the existing login servlet.
+
+            userIdInput.value = identifier;
         });
     }
+
     /* * INLINE ERROR HELPERS */
     function setFieldError(element, message) {
         if (element) {
@@ -123,6 +116,7 @@ document.addEventListener('DOMContentLoaded', function () {
             element.style.display = 'block';
         }
     }
+
     function clearFieldErrors() {
         if (userIdError) {
             userIdError.textContent = '';
@@ -133,6 +127,7 @@ document.addEventListener('DOMContentLoaded', function () {
             passwordError.style.display = 'none';
         }
     }
+
     /* * FORGOT PASSWORD MODAL */
     function openForgotModal() {
         if (!forgotModal) {
@@ -144,6 +139,7 @@ document.addEventListener('DOMContentLoaded', function () {
             closeForgotModal.focus();
         }
     }
+
     function hideForgotModal() {
         if (!forgotModal) {
             return;
@@ -154,15 +150,18 @@ document.addEventListener('DOMContentLoaded', function () {
             forgotLink.focus();
         }
     }
+
     if (forgotLink) {
         forgotLink.addEventListener('click', function (event) {
             event.preventDefault();
             openForgotModal();
         });
     }
+
     if (closeForgotModal) {
         closeForgotModal.addEventListener('click', hideForgotModal);
     }
+
     if (forgotModal) {
         forgotModal.addEventListener('click', function (event) {
             if (event.target === forgotModal) {
@@ -170,6 +169,7 @@ document.addEventListener('DOMContentLoaded', function () {
             }
         });
     }
+
     document.addEventListener('keydown', function (event) {
         if (
             event.key === 'Escape' &&
@@ -179,6 +179,7 @@ document.addEventListener('DOMContentLoaded', function () {
             hideForgotModal();
         }
     });
+
     /* * DISPLAY VALIDATION MESSAGES */
     function showMessage(message, type) {
         if (!loginMessage) {
@@ -187,6 +188,7 @@ document.addEventListener('DOMContentLoaded', function () {
         loginMessage.textContent = message;
         loginMessage.className = 'alert mt-3 alert-' + type;
     }
+
     function clearMessage() {
         if (!loginMessage) {
             return;
@@ -194,6 +196,7 @@ document.addEventListener('DOMContentLoaded', function () {
         loginMessage.textContent = '';
         loginMessage.className = 'alert mt-3 d-none';
     }
+
     /* * INITIALIZE THE DEFAULT STUDENT ROLE */
     window.switchRole('student');
 });
