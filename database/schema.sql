@@ -1,9 +1,23 @@
+-- Electra Database Schema
+-- Compatible with MySQL 8.0+ (InnoDB)
 
 CREATE DATABASE IF NOT EXISTS electra_db
     CHARACTER SET utf8mb4
     COLLATE utf8mb4_unicode_ci;
 
 USE electra_db;
+
+-- Drop child tables first in reverse dependency order for safe idempotent recreation
+DROP TABLE IF EXISTS elective_form_reviews;
+DROP TABLE IF EXISTS allocations;
+DROP TABLE IF EXISTS allocation_runs;
+DROP TABLE IF EXISTS student_preferences;
+DROP TABLE IF EXISTS preference_submissions;
+DROP TABLE IF EXISTS electives;
+DROP TABLE IF EXISTS allocation_forms;
+DROP TABLE IF EXISTS student_profile;
+DROP TABLE IF EXISTS students;
+DROP TABLE IF EXISTS users;
 
 -- 1. Users: credentials and roles
 CREATE TABLE users (
@@ -15,7 +29,7 @@ CREATE TABLE users (
     created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
 ) ENGINE=InnoDB;
 
--- 2. Student profiles
+-- 2. Student profiles (official student identity table queried by DAOs)
 CREATE TABLE students (
     student_id BIGINT PRIMARY KEY AUTO_INCREMENT,
     user_id BIGINT NOT NULL UNIQUE,
@@ -223,8 +237,7 @@ CREATE TABLE elective_form_reviews (
         REFERENCES users(user_id)
 ) ENGINE=InnoDB;
 
-
--- Student profile details
+-- 10. Supplementary student profile table (historical/optional compatibility)
 CREATE TABLE student_profile (
     student_id BIGINT PRIMARY KEY,
     full_name VARCHAR(100) NOT NULL,
@@ -242,7 +255,7 @@ CREATE TABLE student_profile (
         REFERENCES students(student_id)
 ) ENGINE=InnoDB;
 
--- Useful indexes for common queries
+-- Performance and lookup indexes
 CREATE INDEX idx_forms_status
     ON allocation_forms(form_status);
 

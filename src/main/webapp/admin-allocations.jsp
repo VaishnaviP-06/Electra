@@ -97,6 +97,12 @@
         .table-tight td, .table-tight th {
             padding: 10px 12px;
         }
+        .toolbar{
+            margin-top: 10px;
+        }
+        #newForm{
+            margin-top: 10px;
+        }
     </style>
 </head>
 <body class="admin-page">
@@ -399,7 +405,7 @@
                             <h2 class="h5 mb-1">Allocation Forms Directory</h2>
                             <p class="form-hint mb-0">Select any form to inspect its configuration or manage its allocation lifecycle.</p>
                         </div>
-                        <button class="btn btn-sm btn-outline-primary" type="button" data-bs-toggle="collapse" data-bs-target="#createFormCollapse" aria-expanded="false" aria-controls="createFormCollapse">
+                        <button id="newForm" class="btn btn-sm btn-outline-primary" type="button" data-bs-toggle="collapse" data-bs-target="#createFormCollapse" aria-expanded="false" aria-controls="createFormCollapse">
                             + New Form
                         </button>
                     </div>
@@ -507,10 +513,6 @@
                         </table>
                     </div>
                 </section>
-
-                <footer class="app-footer">
-                    Electra &bull; Departmental Elective Allocation System &bull; Academic Year 2026–27
-                </footer>
             </section>
         </main>
     </div>

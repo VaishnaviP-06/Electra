@@ -226,9 +226,6 @@
 
             </section>
 
-            <footer class="app-footer text-muted small py-3">
-                Electra &bull; Departmental Elective Allocation System &bull; Academic Year 2026–27
-            </footer>
 
         </section>
     </main>

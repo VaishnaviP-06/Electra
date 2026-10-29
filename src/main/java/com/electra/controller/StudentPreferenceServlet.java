@@ -47,7 +47,11 @@ public class StudentPreferenceServlet extends HttpServlet {
             return;
         }
 
-        long studentId = resolveStudentId(session);
+        Long studentId = resolveStudentId(session);
+        if (studentId == null) {
+            response.sendError(HttpServletResponse.SC_FORBIDDEN, "No student profile is linked to this session.");
+            return;
+        }
 
         // Flash messages
         if (session.getAttribute("preferenceSuccess") != null) {
@@ -141,7 +145,11 @@ public class StudentPreferenceServlet extends HttpServlet {
             return;
         }
 
-        long studentId = resolveStudentId(session);
+        Long studentId = resolveStudentId(session);
+        if (studentId == null) {
+            response.sendError(HttpServletResponse.SC_FORBIDDEN, "No student profile is linked to this session.");
+            return;
+        }
         String formIdParam = request.getParameter("formId");
         String action = request.getParameter("action");
 
@@ -197,7 +205,7 @@ public class StudentPreferenceServlet extends HttpServlet {
         }
     }
 
-    private long resolveStudentId(HttpSession session) {
+    private Long resolveStudentId(HttpSession session) {
         Object sid = session.getAttribute("studentId");
         if (sid instanceof Long) {
             return (Long) sid;
@@ -217,8 +225,6 @@ public class StudentPreferenceServlet extends HttpServlet {
             }
         }
 
-        // Fallback for demo student CE055
-        session.setAttribute("studentId", 1L);
-        return 1L;
+        return null;
     }
 }

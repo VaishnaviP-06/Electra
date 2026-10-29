@@ -240,13 +240,6 @@
         </main>
     </div>
 
-    <footer class="electra-footer">
-        <div class="container">
-            <span>Electra</span>
-            <p>The Right Choice. The Right Future.</p>
-            <small>Departmental Elective Allocation System &bull; Academic Year 2026–27</small>
-        </div>
-    </footer>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>
