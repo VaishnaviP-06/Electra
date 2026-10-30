@@ -25,7 +25,11 @@
     <link rel="stylesheet" href="assets/css/forms.css">
     <link rel="stylesheet" href="assets/css/app-polish.css">
     <style>
-        .results-grid { display: flex; flex-direction: column; gap: 1.25rem; }
+        .results-grid {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 1.25rem;
+        }
         .result-card {
             background: var(--card-bg, #fff);
             border: 1px solid var(--border-color, #e5e7eb);
@@ -69,6 +73,11 @@
         .empty-state { text-align: center; padding: 3rem 1rem; color: var(--muted, #6b7280); }
         .empty-state .icon { font-size: 3rem; margin-bottom: 1rem; }
         .reason-text { font-size: 0.8rem; color: var(--muted, #6b7280); margin-top: 0.25rem; font-style: italic; }
+        @media (max-width: 768px) {
+            .results-grid {
+                grid-template-columns: 1fr;
+            }
+        }
     </style>
 </head>
 <body class="electra-form-page">

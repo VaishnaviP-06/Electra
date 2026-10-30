@@ -102,7 +102,7 @@
                     <span class="action-link">Rank electives <svg class="icon icon-sm" aria-hidden="true" focusable="false"><use href="#i-arrow"/></svg></span>
                 </a>
                 <a href="${pageContext.request.contextPath}/allocation-results" class="action-card">
-                    <div class="action-icon icon-sage"><svg class="icon" aria-hidden="true" focusable="false"><use href="#i-check"/></svg></span>
+                    <div class="action-icon icon-sage"><svg class="icon" aria-hidden="true" focusable="false"><use href="#i-check"/></svg></div>
                     <h3>View Allocation</h3>
                     <p>Check your final assigned elective when results are released.</p>
                     <span class="action-link">View status <svg class="icon icon-sm" aria-hidden="true" focusable="false"><use href="#i-arrow"/></svg></span>
